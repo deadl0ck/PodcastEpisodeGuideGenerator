@@ -1,7 +1,10 @@
-# qow_processor.py
-# Scrapes r/thisweekinretro for Community Question of the Week posts.
+"""Fetch and normalize TWIR Community Question of the Week entries from Reddit."""
+
+from __future__ import annotations
+
 import logging
 import re
+from typing import Any
 
 import praw
 
@@ -22,8 +25,9 @@ logger = logging.getLogger(__name__)
 
 
 class QuestionOfTheWeekProcessor:
+    """Scrape, normalize, and cache Community Question of the Week entries."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.reddit = praw.Reddit(
             client_id=EnvVarUtils.get_env_var(REDDIT_CLIENT_ID),
             client_secret=EnvVarUtils.get_env_var(REDDIT_CLIENT_SECRET),
@@ -32,7 +36,7 @@ class QuestionOfTheWeekProcessor:
             user_agent=EnvVarUtils.get_env_var(REDDIT_USER_AGENT)
         )
         self.questions = []
-        self.episodes_and_questions = {}
+        self.episodes_and_questions: dict[int, QOW] = {}
         self.episode_cache = QOWCache()
 
     @staticmethod
@@ -92,14 +96,16 @@ class QuestionOfTheWeekProcessor:
 
     @staticmethod
     def __replace_badly_formed_questions(question_to_check: str) -> str:
+        """Replace known malformed question texts with curated fixed values."""
         for item in REPLACEMENT_LIST:
             if item in question_to_check:
                 return REPLACEMENT_LIST[item]
         return question_to_check
 
     @staticmethod
-    def __add_missing_episodes() -> list:
-        return_list = []
+    def __add_missing_episodes() -> list[QOW]:
+        """Return hardcoded fallback QoW entries for episodes missing Reddit posts."""
+        return_list: list[QOW] = []
 
         q = QOW("What video game art or music would you like to put in a museum for all to enjoy?",
                 "What video game art or music would you like to put in a museum for all to enjoy?",
@@ -122,7 +128,8 @@ class QuestionOfTheWeekProcessor:
         return return_list
 
     def __store_to_dict(self) -> None:
-        data = {}
+        """Store scraped questions in a sorted episode-number mapping and cache it."""
+        data: dict[int, QOW] = {}
         for e in self.questions:
             data[e.episode_number] = e
 
@@ -130,6 +137,7 @@ class QuestionOfTheWeekProcessor:
         self.episode_cache.update_cache(self.episodes_and_questions)
 
     def process_qow(self) -> None:
+        """Fetch QoW entries from Reddit, normalize them, and update the cache."""
         logger.info('Processing Question of the Week - please wait....')
         subreddit = self.reddit.subreddit(SUBREDDIT_NAME)
         query = REDDIT_QUERY

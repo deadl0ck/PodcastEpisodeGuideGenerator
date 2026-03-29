@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 
 
 class BaseEpisodeRenderer(ABC):
+    """Common retry and rendering contract for provider-specific episode renderers."""
+
     def __init__(self, retry_number: int):
         self.retry_number = retry_number
 
@@ -15,6 +17,7 @@ class BaseEpisodeRenderer(ABC):
                         fn: Callable[[], None],
                         episode_title: str,
                         exception_types: tuple[type[BaseException], ...]) -> None:
+        """Execute an episode render function with bounded retries."""
         retry_count = 0
         while True:
             try:
@@ -31,4 +34,5 @@ class BaseEpisodeRenderer(ABC):
 
     @abstractmethod
     def render_episode_pages(self, writer: Any, episodes: list[Any]) -> None:
-        pass
+        """Render all episode pages for a provider."""
+        raise NotImplementedError

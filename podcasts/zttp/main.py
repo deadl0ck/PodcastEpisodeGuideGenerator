@@ -1,3 +1,7 @@
+"""ZTTP guide generator entrypoint and orchestration."""
+
+from __future__ import annotations
+
 import os
 import pickle
 import logging
@@ -46,7 +50,9 @@ TEST_RUN, TEST_RUN_COUNT = get_test_run_settings()
 
 
 class ZTTPGuideMain(BaseGuideMain):
-    def build_context(self, episodes: list) -> dict:
+    """ZTTP-specific guide orchestration built on the shared base workflow."""
+
+    def build_context(self, episodes: list[Episode]) -> dict[str, dict]:
         logger.info('Writing games list....')
         crapverts = Crapverts.get_all_crapverts()
         covers = Covers().get_covers()
@@ -55,7 +61,7 @@ class ZTTPGuideMain(BaseGuideMain):
             "covers": covers,
         }
 
-    def write_toc(self, episodes: list, context: dict) -> None:
+    def write_toc(self, episodes: list[Episode], context: dict[str, dict]) -> None:
         renderer = ZTTPTocRenderer()
         episode_names = renderer.build_entries(
             episodes,
@@ -71,7 +77,7 @@ class ZTTPGuideMain(BaseGuideMain):
             TOC_SPACING_DELTA,
         )
 
-    def build_pages(self, episodes: list, context: dict) -> None:
+    def build_pages(self, episodes: list[Episode], context: dict[str, dict]) -> None:
         logger.info("Getting original Zzap64! cover data....")
         renderer = ZTTPEpisodeRenderer(
             crapverts=context["crapverts"],
@@ -80,7 +86,7 @@ class ZTTPGuideMain(BaseGuideMain):
         )
         renderer.render_episode_pages(self.writer, episodes)
 
-    def write_feature_list(self, episodes: list, context: dict) -> None:
+    def write_feature_list(self, episodes: list[Episode], context: dict[str, dict]) -> None:
         self.writer.write_games_list(
             episodes,
             GAME_LIST_TEXT,
@@ -106,6 +112,7 @@ class ZTTPGuideMain(BaseGuideMain):
 
 
 def format_duration(duration_str: str) -> str:
+    """Convert a raw duration string in seconds to HH:MM format."""
     if not duration_str:
         return "00:00"
 
@@ -116,6 +123,7 @@ def format_duration(duration_str: str) -> str:
 
 
 def load_episodes() -> list[Episode]:
+    """Load and cache ZTTP feed episodes enriched with parsed game metadata."""
     ensure_cache_dirs()
 
     if TEST_RUN:
@@ -168,6 +176,7 @@ def load_episodes() -> list[Episode]:
 
 
 def main() -> None:
+    """Run the ZTTP guide generation flow."""
     writer = PDFWriter()
     app = ZTTPGuideMain(writer)
     app.create_and_save_magazine(COVER_IMAGE, load_episodes())

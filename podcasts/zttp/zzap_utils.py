@@ -1,6 +1,13 @@
+"""ZTTP-specific parsing helpers for titles, dates, games, and cover images."""
+
+from __future__ import annotations
+
+from typing import Any
+
 from bs4 import BeautifulSoup
-import requests
 import re
+
+import requests
 
 from podcasts.common.podcast_utils import BasePodcastUtils
 from podcasts.zttp.page_constants import COVER_IMAGE
@@ -24,9 +31,12 @@ TITLE_TEXT_START_REPLACEMENTS = [
 
 
 class ZzapUtils(BasePodcastUtils):
+    """Utility methods for parsing ZTTP feed and web page data."""
+
     @staticmethod
-    def replace_title_text(episodes: list, crapverts: dict) -> list:
-        episode_names = []
+    def replace_title_text(episodes: list[Any], crapverts: dict[int, Any]) -> list[tuple[str, str]]:
+        """Return TOC-ready episode titles with ZTTP-specific title cleanup."""
+        episode_names: list[tuple[str, str]] = []
         for curr_episode in episodes:
             title = curr_episode.title
             for replacement in TITLE_TEXT_START_REPLACEMENTS:
@@ -41,11 +51,13 @@ class ZzapUtils(BasePodcastUtils):
 
     @staticmethod
     def extract_date_time(data: str) -> str:
+        """Strip the time suffix from a published-date string."""
         return BasePodcastUtils.strip_time_suffix(data)
 
     @staticmethod
-    def extract_games_info(content_html: str) -> list:
-        games_this_episode = []
+    def extract_games_info(content_html: str) -> list[str]:
+        """Extract the list of game titles reviewed in an episode."""
+        games_this_episode: list[str] = []
         soup = BeautifulSoup(content_html, "lxml")
         data = soup.find_all("li")
         if len(data) > 0:
@@ -57,6 +69,7 @@ class ZzapUtils(BasePodcastUtils):
 
     @staticmethod
     def get_image_url(url: str) -> str:
+        """Return the primary episode image URL from a ZTTP episode page."""
         response = requests.get(url, timeout=30)
         if response.status_code == 200:
             html_content = response.text
@@ -76,6 +89,7 @@ class ZzapUtils(BasePodcastUtils):
 
     @staticmethod
     def extract_game_award_text(text: str) -> str:
+        """Return the matching award/games heading text from HTML content."""
         for value in GAME_AWARD_TEXT:
             if value in text:
                 return value

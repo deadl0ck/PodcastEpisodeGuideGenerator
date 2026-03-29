@@ -1,3 +1,7 @@
+"""TWIR episode model built on shared media-episode fields."""
+
+from __future__ import annotations
+
 import logging
 
 from podcasts.common.models import BaseMediaEpisode
@@ -7,6 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 class Episode(BaseMediaEpisode):
+    """Concrete TWIR episode carrying video and sortable-date metadata."""
+
     def __init__(self,
                  title: str,
                  description: str,
@@ -34,6 +40,7 @@ class Episode(BaseMediaEpisode):
         self.sortable_date = sortable_date
 
     def print_out(self) -> None:
+        """Log the episode's diagnostic fields for debugging/tracing."""
         self.log_fields([
             ('Title', self.title),
             ('Description', self.description),

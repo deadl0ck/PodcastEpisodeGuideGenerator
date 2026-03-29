@@ -1,3 +1,7 @@
+"""TWIR-specific text parsing utilities."""
+
+from __future__ import annotations
+
 import logging
 import re
 
@@ -26,8 +30,11 @@ logger = logging.getLogger(__name__)
 
 
 class TWIRUtils(BasePodcastUtils):
+    """Parse episode titles and descriptions for TWIR feeds."""
+
     @staticmethod
     def extract_description(full_desc: str) -> str:
+        """Return the first meaningful TWIR description line for an episode."""
         no_notes_text = "[No detailed show notes for this episode]"
         for ignore in lines_to_ignore:
             if ignore in full_desc:
@@ -48,6 +55,7 @@ class TWIRUtils(BasePodcastUtils):
 
     @staticmethod
     def extract_episode_number(title: str) -> tuple[int, str]:
+        """Extract the episode number and matched episode marker from a title."""
         episode_details = ""
         for expr in episode_markers:
             match = re.search(expr, title)
@@ -61,6 +69,7 @@ class TWIRUtils(BasePodcastUtils):
 
     @staticmethod
     def tidy_up_title(title: str) -> str:
+        """Remove TWIR episode markers and surrounding separators from a title."""
         remove_text = ""
         for expr in episode_markers:
             match = re.search(expr, title)

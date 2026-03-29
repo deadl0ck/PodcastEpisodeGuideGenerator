@@ -1,19 +1,23 @@
-# data_retriever.py
-# Handles all external data fetching:
-#   - YouTube playlist items via the YouTube Data API
-#   - Podcast MP3 links and air dates via the Podbean RSS feed
-from pyyoutube import Api
-from podcasts.twir.twir_utils import TWIRUtils
-import feedparser
+"""External data retrieval helpers for TWIR feeds and YouTube data."""
+
+from __future__ import annotations
+
 import datetime
+from typing import Any
+
+import feedparser
+from pyyoutube import Api
+
+from podcasts.twir.twir_utils import TWIRUtils
 
 
 class DataRetriever:
+    """Fetch and normalize remote data sources used by the TWIR generator."""
 
     @staticmethod
     def get_podcast_mp3_links_and_air_dates(rss_feed_url: str) -> dict[int, tuple[str, str, str]]:
-        # Returns a dict keyed by episode number: (mp3_url, formatted_date, csv_date)
-        items = {}
+        """Return a mapping of episode number to audio URL and formatted dates."""
+        items: dict[int, tuple[str, str, str]] = {}
         feed = feedparser.parse(rss_feed_url)
         content = feed.entries
         for episode in content:
@@ -25,14 +29,12 @@ class DataRetriever:
         return items
 
     @staticmethod
-    def get_youtube_playlist_items(api_key: str, playlist_id: str) -> dict[tuple[int, str], object]:
-        # Paginates through the full playlist (40 items per page) and returns a dict
-        # keyed by (episode_number, episode_marker_string) -> YouTube snippet.
-        # Private videos are skipped.
+    def get_youtube_playlist_items(api_key: str, playlist_id: str) -> dict[tuple[int, str], Any]:
+        """Return YouTube playlist items keyed by extracted episode marker tuple."""
         api = Api(api_key=api_key)
         more = True
         next_page = ""
-        items = {}
+        items: dict[tuple[int, str], Any] = {}
         while more:
             playlist_item_by_playlist = api.get_playlist_items(playlist_id=playlist_id, count=40, page_token=next_page)
             for vid in playlist_item_by_playlist.items:

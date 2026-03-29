@@ -1,3 +1,7 @@
+"""TWIR guide generator entrypoint and orchestration."""
+
+from __future__ import annotations
+
 import logging
 
 from data_retriever import DataRetriever
@@ -42,11 +46,13 @@ YOUTUBE_WATCH_PREFIX = "https://www.youtube.com/watch?v="
 
 
 class TWIRGuideMain(BaseGuideMain):
-    def __init__(self, writer, qow_dict: dict):
+    """TWIR-specific guide orchestration built on the shared base workflow."""
+
+    def __init__(self, writer, qow_dict: dict[int, object]):
         super().__init__(writer)
         self.qow_dict = qow_dict
 
-    def build_context(self, episodes: list) -> dict:
+    def build_context(self, episodes: list[Episode]) -> dict[str, dict[int, object]]:
         return {"qow": self.qow_dict}
 
     def write_cover(self, cover_image: str) -> None:
@@ -63,7 +69,7 @@ class TWIRGuideMain(BaseGuideMain):
             COVER_LINK,
         )
 
-    def write_toc(self, episodes: list, context: dict) -> None:
+    def write_toc(self, episodes: list[Episode], context: dict[str, dict[int, object]]) -> None:
         renderer = TWIRTocRenderer(QOW_LIST_BOOKMARK)
         episode_names = renderer.build_entries(episodes)
 
@@ -76,10 +82,10 @@ class TWIRGuideMain(BaseGuideMain):
             TOC_SPACING_DELTA,
         )
 
-    def build_pages(self, episodes: list, context: dict) -> None:
+    def build_pages(self, episodes: list[Episode], context: dict[str, dict[int, object]]) -> None:
         build_episode_pages(self.writer, episodes, context["qow"], RETRY_NUMBER)
 
-    def write_feature_list(self, episodes: list, context: dict) -> None:
+    def write_feature_list(self, episodes: list[Episode], context: dict[str, dict[int, object]]) -> None:
         self.writer.write_qow_list(
             context["qow"],
             QOW_LIST_TEXT,
@@ -91,6 +97,7 @@ class TWIRGuideMain(BaseGuideMain):
 
 
 def load_episodes() -> list[Episode]:
+    """Load and normalize TWIR episode data from YouTube and Podbean."""
     EnvVarUtils.init()
 
     youtube_items = DataRetriever.get_youtube_playlist_items(
@@ -126,6 +133,7 @@ def load_episodes() -> list[Episode]:
 
 
 def main() -> None:
+    """Run the TWIR guide generation flow."""
     writer = PDFWriter()
     qow_processor = QuestionOfTheWeekProcessor()
     qow_processor.process_qow()
