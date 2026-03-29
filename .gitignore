@@ -1,0 +1,8 @@
+.env
+.venv/
+.venv*/
+__pycache__/
+.cache/
+qow_cache.pkl
+image_cache/
+.DS_Store
