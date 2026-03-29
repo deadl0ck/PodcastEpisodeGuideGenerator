@@ -18,6 +18,7 @@ SUPPORTED_PODCASTS = ("twir", "zttp")
 
 
 def _build_command(podcast_key: str) -> list[str]:
+    """Return the subprocess command for the selected provider entrypoint."""
     if podcast_key == "twir":
         return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / "twir" / "main.py")]
     if podcast_key == "zttp":
@@ -26,6 +27,7 @@ def _build_command(podcast_key: str) -> list[str]:
 
 
 def _parse_podcast_selection(raw_value: str) -> list[str]:
+    """Parse and normalize the requested podcast list from CLI input."""
     requested = [item.strip().lower() for item in raw_value.split(",") if item.strip()]
     if not requested:
         raise ValueError("At least one podcast must be selected")
@@ -49,6 +51,7 @@ def _parse_podcast_selection(raw_value: str) -> list[str]:
 
 
 def main() -> int:
+    """Parse CLI arguments, run the selected providers, and return a process exit code."""
     parser = argparse.ArgumentParser(
         description="Generate separate podcast episode guides for selected podcasts."
     )

@@ -1,12 +1,13 @@
-# env_var_utils.py
-# Loads environment variables from .env (via python-dotenv) and validates
-# that all required values are present before the application starts.
+"""Environment variable loading, validation, and safe logging helpers."""
+
+from __future__ import annotations
+
 import os
 import sys
 import logging
 from dotenv import load_dotenv
 
-ENV_VARS = {}  # In-memory store populated by EnvVarUtils.init()
+ENV_VARS: dict[str, str | None] = {}
 GOOGLE_API_KEY = "GOOGLE_API_KEY"
 YOUTUBE_PLAYLIST_ID = "YOUTUBE_PLAYLIST_ID"
 PODBEAN_RSS_FEED = 'PODBEAN_RSS_FEED'
@@ -33,10 +34,14 @@ logger = logging.getLogger(__name__)
 
 
 class EnvVarUtils:
+    """Load, validate, and safely log required runtime environment variables."""
+
     SENSITIVE_ENV_VAR_TOKENS = ["PASSWORD", "SECRET", "API_KEY", "TOKEN"]
 
     @staticmethod
     def init() -> None:
+        """Load variables from .env, validate required values, and log them safely."""
+        load_dotenv()
         EnvVarUtils.populate_env_vars()
         EnvVarUtils.check_env_vars()
         for s in EnvVarUtils.get_env_vars_as_string_list():
@@ -44,6 +49,7 @@ class EnvVarUtils:
 
     @staticmethod
     def get_log_level() -> int:
+        """Return the configured logging level, defaulting to INFO."""
         value = EnvVarUtils.get_env_var(LOG_LEVEL)
         if value is None:
             return logging.INFO
@@ -57,11 +63,13 @@ class EnvVarUtils:
 
     @staticmethod
     def is_sensitive_env_var(name: str) -> bool:
+        """Return whether the env var name should be masked in logs."""
         upper_name = name.upper()
         return any(token in upper_name for token in EnvVarUtils.SENSITIVE_ENV_VAR_TOKENS)
 
     @staticmethod
     def mask_env_var_value(name: str, value: str | None) -> str:
+        """Mask sensitive env var values while keeping short suffixes visible."""
         if value is None:
             return "None"
         if not EnvVarUtils.is_sensitive_env_var(name):
@@ -72,16 +80,21 @@ class EnvVarUtils:
         return f"{'*' * (len(value) - 4)}{value[-4:]}"
 
     @staticmethod
-    def get_env_var(name: str) -> str:
+    def get_env_var(name: str) -> str | None:
+        """Return the current value for an environment variable from cache or process env."""
+        if name not in ENV_VARS:
+            ENV_VARS[name] = os.getenv(name)
         return ENV_VARS[name]
 
     @staticmethod
     def populate_env_vars() -> None:
+        """Refresh the in-memory cache from the current process environment."""
         for current in ENV_VAR_NAMES + OPTIONAL_ENV_VAR_NAMES:
             ENV_VARS[current] = os.getenv(current)
 
     @staticmethod
-    def is_valid_env_var(value: str, env_var_name: str) -> bool:
+    def is_valid_env_var(value: str | None, env_var_name: str) -> bool:
+        """Return whether a required environment variable has a usable value."""
         if value is None:
             logger.error('You must specify the environment variable "%s"', env_var_name)
             return False
@@ -89,6 +102,7 @@ class EnvVarUtils:
 
     @staticmethod
     def check_env_vars() -> None:
+        """Exit the process when required environment variables are missing."""
         errors_found = False
 
         for current in ENV_VAR_NAMES:
@@ -100,12 +114,12 @@ class EnvVarUtils:
 
     @staticmethod
     def get_env_vars_as_string_list() -> list[str]:
-        return_list = []
-        for key in ENV_VARS.keys():
+        """Return formatted environment variable log lines with masking applied."""
+        return_list: list[str] = []
+        for key in ENV_VARS:
             safe_value = EnvVarUtils.mask_env_var_value(key, ENV_VARS[key])
             return_list.append(f'Environment Variable "{key}": "{safe_value}"')
         return return_list
 
 
 load_dotenv()
-EnvVarUtils.populate_env_vars()

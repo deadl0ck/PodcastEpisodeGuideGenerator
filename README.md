@@ -51,7 +51,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # 3) Install dependencies
-pip install python-dotenv python-youtube feedparser numpy requests Pillow reportlab praw
+pip install -r requirements.txt
 
 # 4) Create .env from the example in this README
 
@@ -70,7 +70,7 @@ py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
 # 3) Install dependencies
-pip install python-dotenv python-youtube feedparser numpy requests Pillow reportlab praw
+pip install -r requirements.txt
 
 # 4) Create .env from the example in this README
 
@@ -107,7 +107,7 @@ Recommended default setup (works with your installed Python 3.x).
 python3 -m venv .venv
 source .venv/bin/activate
 python --version
-pip install python-dotenv python-youtube feedparser numpy requests Pillow reportlab praw
+pip install -r requirements.txt
 ```
 
 ### Windows (PowerShell)
@@ -116,7 +116,7 @@ pip install python-dotenv python-youtube feedparser numpy requests Pillow report
 py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python --version
-pip install python-dotenv python-youtube feedparser numpy requests Pillow reportlab praw
+pip install -r requirements.txt
 ```
 
 Optional: if you specifically want to pin to Python 3.10 (known-good version):
@@ -127,7 +127,7 @@ Optional: if you specifically want to pin to Python 3.10 (known-good version):
 python3.10 -m venv .venv310
 source .venv310/bin/activate
 python --version                      # Should show Python 3.10.x
-pip install python-dotenv python-youtube feedparser numpy requests Pillow reportlab praw
+pip install -r requirements.txt
 ```
 
 ### Windows (PowerShell, Python 3.10 pinned)
@@ -136,7 +136,7 @@ pip install python-dotenv python-youtube feedparser numpy requests Pillow report
 py -3.10 -m venv .venv310
 .\.venv310\Scripts\Activate.ps1
 python --version
-pip install python-dotenv python-youtube feedparser numpy requests Pillow reportlab praw
+pip install -r requirements.txt
 ```
 
 If `python3.10` is not available, you can still create a venv with your installed Python 3.x version.
@@ -149,7 +149,21 @@ If `python3.10` is not available, you can still create a venv with your installe
 
 ### 1. `.env` file
 
-Create a `.env` file in the project root (copy the template below).
+Create a `.env` file in the project root by copying `.env.example`.
+
+### macOS / Linux
+
+```bash
+cp .env.example .env
+```
+
+### Windows (PowerShell)
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Template contents:
 
 Required variables:
 
@@ -268,6 +282,8 @@ python run_guides.py --podcasts all --continue-on-error
 ├── data_retriever.py        # Fetches episodes from YouTube API and Podbean RSS feed
 ├── cache_paths.py           # Centralized cache locations under .cache/TWIR and .cache/ZTTP
 ├── env_var_utils.py         # Loads and validates environment variables from .env
+├── .env.example             # Safe starter template for local configuration
+├── requirements.txt         # Runtime dependency list for local installation
 ├── constants/               # Typed constants registry for provider selection
 ├── renderers/               # Shared and provider-specific renderers
 ├── tests/                   # Unit tests
@@ -310,7 +326,7 @@ LOG_LEVEL=DEBUG python run_guides.py --podcasts twir
 
 ## Image Cache
 
-Images (episode thumbnails, cover, listen button) are cached in `image_cache/` on first download. Subsequent runs use the local copy, which:
+Images (episode thumbnails, cover, listen button) are cached in the provider-specific `.cache/.../images/` directories on first download. Subsequent runs use the local copy, which:
 
 - Significantly speeds up generation
 - Allows blocked or unavailable images to be substituted manually
@@ -334,9 +350,11 @@ Image cache MISS: i-ibb-co-ccL0XZPJ-TWIR-Reddit-logo.jpg - downloading
 Image download FAILED for URL: https://i.ibb.co/ccL0XZPJ/TWIR-Reddit-logo.jpg
 ```
 
-Download the image manually and copy it to `image_cache/` using the filename from the `Image cache MISS:` line.
+Download the image manually and copy it to the provider image cache directory using the filename from the `Image cache MISS:` line.
 
-Preferred location for manual copies is now `.cache/TWIR/images/`.
+Preferred manual-copy locations are:
+- `.cache/TWIR/images/`
+- `.cache/ZTTP/images/`
 
 The two static images hosted on `i.ibb.co` (which may be blocked in some environments) are:
 

@@ -1,0 +1,10 @@
+python-dotenv
+python-youtube
+feedparser
+numpy
+requests
+Pillow
+reportlab
+praw
+beautifulsoup4
+lxml

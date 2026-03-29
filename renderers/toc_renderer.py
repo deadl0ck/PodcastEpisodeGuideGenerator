@@ -1,3 +1,5 @@
+"""Table-of-contents renderers shared by provider guide generators."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -13,10 +15,14 @@ class BaseTocRenderer(ABC):
 
 
 class TWIRTocRenderer(BaseTocRenderer):
+    """Build TOC entries for TWIR episode pages plus the QoW section."""
+
     def __init__(self, qow_bookmark: str):
+        """Store the bookmark target for the Question of the Week list."""
         self.qow_bookmark = qow_bookmark
 
     def build_entries(self, episodes: list[Any], **kwargs: Any) -> list[tuple[str, Any]]:
+        """Return TWIR TOC entries prefixed with the QoW jump target."""
         entries: list[tuple[str, Any]] = [
             ("Jump to Question of the Week List", self.qow_bookmark),
         ]
@@ -25,9 +31,12 @@ class TWIRTocRenderer(BaseTocRenderer):
 
 
 class ZTTPTocRenderer(BaseTocRenderer):
+    """Build TOC entries for ZTTP using provider-specific title formatting."""
+
     def build_entries(self,
                       episodes: list[Any],
                       **kwargs: Any) -> list[tuple[str, Any]]:
+        """Delegate TOC entry creation to the supplied provider formatter."""
         formatter = kwargs.get("formatter")
         crapverts = kwargs.get("crapverts")
         if not callable(formatter):
