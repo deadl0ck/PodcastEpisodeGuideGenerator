@@ -49,6 +49,7 @@ class PDFWriter(BasePDFWriter):
         file_name = unquote(file_name)
         zttp_filename_cache = os.path.join(IMAGE_CACHE_LOCATION, file_name)
         if os.path.exists(zttp_filename_cache):
+            logger.info("Image cache HIT (ZTTP filename): %s", os.path.basename(zttp_filename_cache))
             with open(zttp_filename_cache, "rb") as f:
                 return f.read()
 
@@ -65,6 +66,7 @@ class PDFWriter(BasePDFWriter):
 
         for candidate in legacy_candidates:
             if os.path.exists(candidate):
+                logger.info("Image cache HIT (TWIR fallback): %s", os.path.basename(candidate))
                 with open(candidate, "rb") as f:
                     image_bytes = f.read()
                 # Backfill ZTTP cache using filename convention and shared key scheme.
@@ -81,6 +83,7 @@ class PDFWriter(BasePDFWriter):
                     pass
                 return image_bytes
 
+            logger.info("Image cache MISS (ZTTP): %s", file_name)
         return super()._get_or_download_image_bytes(image_url)
 
     # Backward-compatible aliases during migration.

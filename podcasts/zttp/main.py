@@ -133,7 +133,9 @@ def load_episodes() -> list[Episode]:
     content = feed.entries
     episodes = []
     test_run_count = 0
-    episode_cache = {}
+    episode_cache: dict[str, Episode] = {}
+    cache_hits = 0
+    cache_misses = 0
 
     if os.path.exists(EPISODE_CACHE_LOCATION):
         with open(EPISODE_CACHE_LOCATION, 'rb') as f:
@@ -144,11 +146,12 @@ def load_episodes() -> list[Episode]:
         if ep.title in episode_cache:
             logger.info('Using cached data for %s', ep.title)
             episodes.append(episode_cache[ep.title])
+            cache_hits += 1
         else:
             html = ep.content[0].value
             game_list_text = ZzapUtils.extract_game_award_text(html)
             game_list = ZzapUtils.extract_games_info(html)
-            episodes.append(Episode(
+            episode = Episode(
                 ep.title,
                 ep.link,
                 ep.description,
@@ -160,17 +163,23 @@ def load_episodes() -> list[Episode]:
                 ZzapUtils.get_image_url(ep.link),
                 game_list_text,
                 game_list,
-            ))
+            )
+            episodes.append(episode)
+            # Keep cache warm for both full and --test runs without shrinking previous entries.
+            episode_cache[episode.title] = episode
+            cache_misses += 1
 
         test_run_count += 1
         if test_run_count >= TEST_RUN_COUNT and TEST_RUN:
             break
 
-    episode_cache.clear()
-    for episode in episodes:
-        episode_cache[episode.title] = episode
     with open(EPISODE_CACHE_LOCATION, 'wb') as f:
         pickle.dump(episode_cache, f)
+
+    logger.info('ZTTP episode cache stats: hits=%s, misses=%s, total_cached=%s',
+                cache_hits,
+                cache_misses,
+                len(episode_cache))
 
     return episodes
 
