@@ -27,8 +27,20 @@ class TestTWIRTocRenderer(unittest.TestCase):
 
 
 class TestZTTPTocRenderer(unittest.TestCase):
+    def test_build_entries_prepends_game_list_link(self):
+        renderer = ZTTPTocRenderer("GAMES_LIST")
+        episodes = [_Episode(3, "Three")]
+
+        def formatter(input_episodes, input_crapverts):
+            return [("formatted", "bookmark")]
+
+        entries = renderer.build_entries(episodes, formatter=formatter, crapverts={})
+
+        self.assertEqual(entries[0], ("Jump to Game Review List", "GAMES_LIST"))
+        self.assertEqual(entries[1], ("formatted", "bookmark"))
+
     def test_build_entries_delegates_to_formatter(self):
-        renderer = ZTTPTocRenderer()
+        renderer = ZTTPTocRenderer("GAMES_LIST")
         episodes = [_Episode(3, "Three")]
 
         called = {"count": 0}
@@ -42,10 +54,11 @@ class TestZTTPTocRenderer(unittest.TestCase):
         entries = renderer.build_entries(episodes, formatter=formatter, crapverts={3: "x"})
 
         self.assertEqual(called["count"], 1)
-        self.assertEqual(entries, [("formatted", "bookmark")])
+        self.assertEqual(entries[0], ("Jump to Game Review List", "GAMES_LIST"))
+        self.assertEqual(entries[1], ("formatted", "bookmark"))
 
     def test_build_entries_requires_callable_formatter(self):
-        renderer = ZTTPTocRenderer()
+        renderer = ZTTPTocRenderer("GAMES_LIST")
         with self.assertRaises(ValueError):
             renderer.build_entries([], formatter=None, crapverts={})
 

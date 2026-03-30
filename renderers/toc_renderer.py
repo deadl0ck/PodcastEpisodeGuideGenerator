@@ -33,13 +33,21 @@ class TWIRTocRenderer(BaseTocRenderer):
 class ZTTPTocRenderer(BaseTocRenderer):
     """Build TOC entries for ZTTP using provider-specific title formatting."""
 
+    def __init__(self, game_list_bookmark: str):
+        """Store the bookmark target for the Game Review List."""
+        self.game_list_bookmark = game_list_bookmark
+
     def build_entries(self,
                       episodes: list[Any],
                       **kwargs: Any) -> list[tuple[str, Any]]:
-        """Delegate TOC entry creation to the supplied provider formatter."""
+        """Return ZTTP TOC entries prefixed with the Game Review List jump target."""
         formatter = kwargs.get("formatter")
         crapverts = kwargs.get("crapverts")
         if not callable(formatter):
             raise ValueError("ZTTPTocRenderer requires a callable 'formatter' keyword argument")
 
-        return formatter(episodes, crapverts)
+        entries: list[tuple[str, Any]] = [
+            ("Jump to Game Review List", self.game_list_bookmark),
+        ]
+        entries.extend(formatter(episodes, crapverts))
+        return entries

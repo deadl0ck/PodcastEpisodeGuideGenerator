@@ -26,6 +26,7 @@ from podcasts.zttp.page_constants import (
     DEFAULT_FONT_BOLD,
     EPISODE_CACHE_LOCATION,
     FEED_URL,
+    GAME_LIST_BOOKMARK,
     GAME_LIST_FONT_COLOUR,
     GAME_LIST_FONT_SIZE,
     GAME_LIST_SPACING_DELTA,
@@ -62,7 +63,7 @@ class ZTTPGuideMain(BaseGuideMain):
         }
 
     def write_toc(self, episodes: list[Episode], context: dict[str, dict]) -> None:
-        renderer = ZTTPTocRenderer()
+        renderer = ZTTPTocRenderer(GAME_LIST_BOOKMARK)
         episode_names = renderer.build_entries(
             episodes,
             formatter=ZzapUtils.replace_title_text,
