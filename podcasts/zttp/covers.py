@@ -10,7 +10,6 @@ from podcasts.zttp.page_constants import ZZAP_CACHE_LOCATION
 
 BASE_COVERS_URL = "https://www.zzap64.co.uk/"
 END_COVER = 90
-LEGACY_ZZAP_CACHE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "ZTTPMagGen", "zzap_cache.pkl")
 logger = logging.getLogger(__name__)
 
 
@@ -26,15 +25,6 @@ class Covers:
                 episode_cache = pickle.load(f)
             if Covers.__is_valid_cover_cache(episode_cache):
                 return episode_cache
-
-        # Fallback to legacy location if present and valid.
-        if os.path.exists(LEGACY_ZZAP_CACHE):
-            with open(LEGACY_ZZAP_CACHE, 'rb') as f:
-                legacy_cache = pickle.load(f)
-            if Covers.__is_valid_cover_cache(legacy_cache):
-                with open(ZZAP_CACHE_LOCATION, 'wb') as f:
-                    pickle.dump(legacy_cache, f)
-                return legacy_cache
 
         cover_data = {}
         logger.info('Building ZTTP cover cache from source pages...')

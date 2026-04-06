@@ -35,8 +35,6 @@ class PDFWriter(BasePDFWriter):
         super().__init__(
             pdf_path=pdf_path,
             image_cache_dir=IMAGE_CACHE_LOCATION,
-            legacy_image_cache_dir='',
-            legacy_namespaced_image_cache_dir='',
         )
 
     def _get_or_download_image_bytes(self, image_url: str) -> bytes:
@@ -50,38 +48,7 @@ class PDFWriter(BasePDFWriter):
             logger.info("Image cache HIT (ZTTP filename): %s", os.path.basename(zttp_filename_cache))
             with open(zttp_filename_cache, "rb") as f:
                 return f.read()
-
-        # Reuse TWIR cache as fallback for shared static assets.
-        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        legacy_candidates = [
-            os.path.join(project_root, '.cache', 'TWIR', 'images', file_name),
-        ]
-        host_prefix = parsed.netloc.replace('.', '-')
-        path_parts = [unquote(part) for part in parsed.path.split('/') if part]
-        if len(path_parts) >= 2:
-            twir_style_name = f"{host_prefix}-{path_parts[-2]}-{path_parts[-1]}"
-            legacy_candidates.append(os.path.join(project_root, '.cache', 'TWIR', 'images', twir_style_name))
-
-        for candidate in legacy_candidates:
-            if os.path.exists(candidate):
-                logger.info("Image cache HIT (TWIR fallback): %s", os.path.basename(candidate))
-                with open(candidate, "rb") as f:
-                    image_bytes = f.read()
-                # Backfill ZTTP cache using filename convention and shared key scheme.
-                try:
-                    with open(zttp_filename_cache, "wb") as f:
-                        f.write(image_bytes)
-                except OSError:
-                    pass
-                shared_key_cache = self._get_cached_image_path(image_url)
-                try:
-                    with open(shared_key_cache, "wb") as f:
-                        f.write(image_bytes)
-                except OSError:
-                    pass
-                return image_bytes
-
-            logger.info("Image cache MISS (ZTTP): %s", file_name)
+        logger.info("Image cache MISS (ZTTP filename): %s", file_name)
         return super()._get_or_download_image_bytes(image_url)
 
     # Backward-compatible aliases during migration.

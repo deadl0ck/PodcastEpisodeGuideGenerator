@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from cache_paths import TWIR_PROVIDER_KEY
 from constants.base_constants import BaseConstants
 from constants.models import (
     CacheNamespaceConfig,
@@ -62,7 +63,7 @@ def build_twir_constants() -> PodcastConstants:
     csv_name = CSV_LOCATION.rsplit("/", 1)[-1]
 
     return PodcastConstants(
-        provider_key="TWIR",
+        provider_key=TWIR_PROVIDER_KEY,
         display_name="This Week in Retro",
         output=OutputConfig(
             pdf_name=PDF_NAME,
@@ -126,7 +127,7 @@ def build_twir_constants() -> PodcastConstants:
             bookmark_name=QOW_LIST_BOOKMARK,
         ),
         cache=CacheNamespaceConfig(
-            provider_key="TWIR",
+            provider_key=TWIR_PROVIDER_KEY,
             image_dir_name="images",
             pickle_keys=("qow_cache",),
             json_keys=("episodes",),

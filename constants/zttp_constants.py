@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from cache_paths import ZTTP_PROVIDER_KEY
 from constants.base_constants import BaseConstants
 from constants.models import (
     CacheNamespaceConfig,
@@ -53,7 +54,7 @@ _BASE = BaseConstants()
 
 def build_zttp_constants() -> PodcastConstants:
     return PodcastConstants(
-        provider_key="ZTTP",
+        provider_key=ZTTP_PROVIDER_KEY,
         display_name="Zapped to the Past",
         output=OutputConfig(
             pdf_name=PDF_NAME,
@@ -117,7 +118,7 @@ def build_zttp_constants() -> PodcastConstants:
             bookmark_name=GAME_LIST_BOOKMARK,
         ),
         cache=CacheNamespaceConfig(
-            provider_key="ZTTP",
+            provider_key=ZTTP_PROVIDER_KEY,
             image_dir_name="images",
             pickle_keys=("episode_cache", "zzap_cache", "crapverts_cache"),
             json_keys=(),

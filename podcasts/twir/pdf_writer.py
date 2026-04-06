@@ -1,11 +1,10 @@
 # podcasts/twir/pdf_writer.py
 # TWIR-specific PDF writer — extends BasePDFWriter with QoW page support.
-import os
 from typing import Any
 
 from reportlab.lib import colors
 
-from cache_paths import IMAGE_CACHE_DIR, LEGACY_TWIR_IMAGE_CACHE_DIR, ensure_cache_dirs
+from cache_paths import IMAGE_CACHE_DIR, ensure_cache_dirs
 from podcasts.common.page_constants import DEFAULT_LETTERS_PER_LINE, TOC_BOOKMARK
 from podcasts.twir.page_constants import (
     FULL_PDF_PATH,
@@ -30,8 +29,6 @@ class PDFWriter(BasePDFWriter):
         super().__init__(
             pdf_path=FULL_PDF_PATH,
             image_cache_dir=IMAGE_CACHE_DIR,
-            legacy_image_cache_dir=os.path.join(os.path.dirname(__file__), "..", "..", "image_cache"),
-            legacy_namespaced_image_cache_dir=LEGACY_TWIR_IMAGE_CACHE_DIR,
         )
 
     @staticmethod

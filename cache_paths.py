@@ -7,6 +7,19 @@ import os
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 CACHE_ROOT = os.path.join(PROJECT_ROOT, '.cache')
 
+# Canonical provider keys.
+TWIR_PROVIDER_KEY = 'TWIR'
+ZTTP_PROVIDER_KEY = 'ZTTP'
+RA_PROVIDER_KEY = 'RA'
+
+# Canonical cache filenames used across providers.
+QOW_CACHE_FILENAME = 'qow_cache.pkl'
+EPISODES_JSON_FILENAME = 'episodes.json'
+ZTTP_EPISODE_CACHE_FILENAME = 'episode_cache.pkl'
+ZTTP_ZZAP_CACHE_FILENAME = 'zzap_cache.pkl'
+ZTTP_CRAPVERTS_CACHE_FILENAME = 'crapverts_cache.pkl'
+RA_EPISODE_CACHE_FILENAME = 'episodes_cache.pkl'
+
 
 def get_podcast_cache_root(podcast_key: str) -> str:
     """Return the provider-specific cache root directory."""
@@ -18,15 +31,16 @@ def get_podcast_image_cache_dir(podcast_key: str) -> str:
     return os.path.join(get_podcast_cache_root(podcast_key), 'images')
 
 
-# Default TWIR cache paths preserved for backward compatibility with current code.
-TWIR_CACHE_ROOT = get_podcast_cache_root('TWIR')
-IMAGE_CACHE_DIR = get_podcast_image_cache_dir('TWIR')
-QOW_CACHE_FILE = os.path.join(TWIR_CACHE_ROOT, 'qow_cache.pkl')
-EPISODE_CACHE_FILE = os.path.join(TWIR_CACHE_ROOT, 'episodes.json')
+def get_podcast_cache_file(podcast_key: str, filename: str) -> str:
+    """Return a cache file path under the provider-specific cache root."""
+    return os.path.join(get_podcast_cache_root(podcast_key), filename)
 
-# Legacy lower-case path from previous versions, used as read fallback during migration.
-LEGACY_TWIR_CACHE_ROOT = os.path.join(CACHE_ROOT, 'twir')
-LEGACY_TWIR_IMAGE_CACHE_DIR = os.path.join(LEGACY_TWIR_CACHE_ROOT, 'images')
+
+# Default TWIR cache paths preserved for backward compatibility with current code.
+TWIR_CACHE_ROOT = get_podcast_cache_root(TWIR_PROVIDER_KEY)
+IMAGE_CACHE_DIR = get_podcast_image_cache_dir(TWIR_PROVIDER_KEY)
+QOW_CACHE_FILE = get_podcast_cache_file(TWIR_PROVIDER_KEY, QOW_CACHE_FILENAME)
+EPISODE_CACHE_FILE = get_podcast_cache_file(TWIR_PROVIDER_KEY, EPISODES_JSON_FILENAME)
 
 
 def ensure_cache_dirs() -> None:

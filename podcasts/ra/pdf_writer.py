@@ -6,7 +6,6 @@ import logging
 
 from reportlab.lib.utils import ImageReader
 
-from cache_paths import get_podcast_image_cache_dir
 from pdf_writer_base import BasePDFWriter
 from podcasts.common.page_constants import (
     COVER_SUB_TEXT,
@@ -39,12 +38,10 @@ class PDFWriter(BasePDFWriter):
     _jump_to_toc_font = DEFAULT_FONT_BOLD
 
     def __init__(self):
-        """Initialise the RA PDF writer with RA image cache and TWIR as legacy fallback."""
+        """Initialise the RA PDF writer with provider-local cache paths."""
         super().__init__(
             pdf_path=FULL_PDF_PATH,
             image_cache_dir=IMAGE_CACHE_LOCATION,
-            legacy_image_cache_dir=get_podcast_image_cache_dir("TWIR"),
-            legacy_namespaced_image_cache_dir="",
         )
 
     @staticmethod

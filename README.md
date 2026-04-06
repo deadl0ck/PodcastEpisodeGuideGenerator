@@ -283,6 +283,14 @@ chmod +x scripts/*.sh
 Use the shared runner to select one or more podcast guides in a single command.
 Each selected podcast generates its own PDF output file (no combined PDF).
 
+CLI selection tokens are lower-case:
+- `twir`
+- `zttp`
+- `ra`
+- `all`
+
+Internally, provider IDs are centralized in `cache_paths.py` as upper-case keys (`TWIR`, `ZTTP`, `RA`) and the runner derives CLI tokens from those constants.
+
 ```bash
 python run_guides.py --podcasts twir
 python run_guides.py --podcasts zttp
@@ -333,7 +341,7 @@ python run_guides.py --podcasts all --continue-on-error
 │   └── RA/
 │       ├── images/          # RA image cache
 │       └── episodes_cache.pkl
-└── image_cache/             # Legacy image cache path (still read for migration)
+└── image_cache/             # Optional manual image staging area (not read automatically)
 ```
 
 ## Logging
@@ -366,7 +374,12 @@ Current standardized cache locations are:
 - `.cache/TWIR/images/`
 - `.cache/ZTTP/images/`
 - `.cache/RA/images/`
-Legacy files in `image_cache/` are still detected and migrated automatically.
+Only provider-local cache folders are used at runtime.
+
+Cache policy:
+- Cache paths are built via shared helpers in `cache_paths.py`.
+- Cache filenames are centralized in `cache_paths.py` (for TWIR, ZTTP, and RA).
+- Legacy cross-provider and legacy-path fallback reads have been removed; cache reads/writes stay within the active provider namespace.
 
 Cache filenames are derived from the full URL to ensure uniqueness across episodes:
 ```
@@ -425,7 +438,7 @@ Both provider entrypoints (`podcasts/twir/main.py` and `podcasts/zttp/main.py`) 
 
 - **Data source**: RA episodes are scraped from `retroasylum.com` (no API keys required). An active internet connection is needed on the first run; subsequent runs use the local cache.
 - **Episode filtering**: Episodes whose cover image URL ends with `RA_error.png` are suppressed in both the TOC and episode pages. The filter list is configurable via `TEXT_TO_REMOVE` in `podcasts/ra/page_constants.py`.
-- **Legacy cache migration**: If a cache from the standalone `RAMagGenPy` tool is found at `RAMagGenPy/episodes-cache.pkl`, it is automatically coerced into the current format on first run.
+- **Cache behavior**: The generator reads and writes only provider-local cache paths under `.cache/<PROVIDER>/`.
 - **Network resilience**: If `retroasylum.com` is unreachable during page discovery, the generator falls back to the existing episode cache rather than aborting.
 
 ---

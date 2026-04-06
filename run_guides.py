@@ -10,21 +10,26 @@ import subprocess
 import sys
 from pathlib import Path
 
+from cache_paths import RA_PROVIDER_KEY, TWIR_PROVIDER_KEY, ZTTP_PROVIDER_KEY
 from constants import get_provider_constants
 
 
 WORKSPACE_ROOT = Path(__file__).resolve().parent
-SUPPORTED_PODCASTS = ("twir", "zttp", "ra")
+CLI_ALL = "all"
+PODCAST_TWIR = TWIR_PROVIDER_KEY.lower()
+PODCAST_ZTTP = ZTTP_PROVIDER_KEY.lower()
+PODCAST_RA = RA_PROVIDER_KEY.lower()
+SUPPORTED_PODCASTS = (PODCAST_TWIR, PODCAST_ZTTP, PODCAST_RA)
 
 
 def _build_command(podcast_key: str) -> list[str]:
     """Return the subprocess command for the selected provider entrypoint."""
-    if podcast_key == "twir":
-        return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / "twir" / "main.py")]
-    if podcast_key == "zttp":
-        return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / "zttp" / "main.py")]
-    if podcast_key == "ra":
-        return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / "ra" / "main.py")]
+    if podcast_key == PODCAST_TWIR:
+        return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / PODCAST_TWIR / "main.py")]
+    if podcast_key == PODCAST_ZTTP:
+        return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / PODCAST_ZTTP / "main.py")]
+    if podcast_key == PODCAST_RA:
+        return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / PODCAST_RA / "main.py")]
     raise ValueError(f"Unsupported podcast key: {podcast_key}")
 
 
@@ -36,14 +41,14 @@ def _parse_podcast_selection(raw_value: str) -> list[str]:
 
     selected: list[str] = []
     for key in requested:
-        if key == "all":
+        if key == CLI_ALL:
             for supported in SUPPORTED_PODCASTS:
                 if supported not in selected:
                     selected.append(supported)
             continue
 
         if key not in SUPPORTED_PODCASTS:
-            allowed = ", ".join((*SUPPORTED_PODCASTS, "all"))
+            allowed = ", ".join((*SUPPORTED_PODCASTS, CLI_ALL))
             raise ValueError(f"Unknown podcast '{key}'. Allowed values: {allowed}")
 
         if key not in selected:
@@ -59,8 +64,11 @@ def main() -> int:
     )
     parser.add_argument(
         "--podcasts",
-        default="twir",
-        help="Comma-separated list: twir,zttp,ra or all (default: twir)",
+        default=PODCAST_TWIR,
+        help=(
+            f"Comma-separated list: {','.join(SUPPORTED_PODCASTS)} "
+            f"or {CLI_ALL} (default: {PODCAST_TWIR})"
+        ),
     )
     parser.add_argument(
         "--continue-on-error",

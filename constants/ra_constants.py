@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from cache_paths import RA_PROVIDER_KEY
 from constants.base_constants import BaseConstants
 from constants.models import (
     CacheNamespaceConfig,
@@ -48,7 +49,7 @@ _BASE = BaseConstants()
 def build_ra_constants() -> PodcastConstants:
     """Build and return the PodcastConstants configuration for the RA provider."""
     return PodcastConstants(
-        provider_key="RA",
+        provider_key=RA_PROVIDER_KEY,
         display_name="Retro Asylum",
         output=OutputConfig(
             pdf_name=PDF_NAME,
@@ -103,7 +104,7 @@ def build_ra_constants() -> PodcastConstants:
         ),
         feature_list=None,
         cache=CacheNamespaceConfig(
-            provider_key="RA",
+            provider_key=RA_PROVIDER_KEY,
             image_dir_name="images",
             pickle_keys=("episodes_cache",),
             json_keys=(),

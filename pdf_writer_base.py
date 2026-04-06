@@ -37,16 +37,8 @@ logger = logging.getLogger(__name__)
 
 
 class BasePDFWriter:
-    # YouTube serves many different videos under identical filenames (e.g. hqdefault.jpg).
-    # These names must NOT be used as cache keys on their own — the full URL-derived
-    # name is required. This set suppresses the legacy filename fallback for these cases.
-    GENERIC_THUMBNAIL_NAMES = {
-        "default.jpg",
-        "mqdefault.jpg",
-        "hqdefault.jpg",
-        "sddefault.jpg",
-        "maxresdefault.jpg",
-    }
+    # YouTube serves many different videos under identical filenames (e.g. hqdefault.jpg),
+    # so cache keys are always derived from the full URL rather than bare filenames.
 
     # Layout constants — identical values in both TWIR and ZTTP page_constants.
     # Subclasses can override these class attributes if values ever diverge.
@@ -67,14 +59,10 @@ class BasePDFWriter:
         self,
         pdf_path: str,
         image_cache_dir: str,
-        legacy_image_cache_dir: str = "",
-        legacy_namespaced_image_cache_dir: str = "",
     ) -> None:
         self.canvas = Canvas(pdf_path, pagesize=A4)
         self.listen_image = None
         self.image_cache_dir = image_cache_dir
-        self.legacy_image_cache_dir = legacy_image_cache_dir
-        self.legacy_namespaced_image_cache_dir = legacy_namespaced_image_cache_dir
         os.makedirs(image_cache_dir, exist_ok=True)
 
     # ------------------------------------------------------------------ #
@@ -102,65 +90,13 @@ class BasePDFWriter:
         sanitized = sanitized.strip("-_.")
         return sanitized or "cached_image"
 
-    def _get_legacy_cached_image_path(self, image_url: str) -> str:
-        parsed = urlparse(image_url)
-        file_name = os.path.basename(parsed.path) or "cached_image"
-        return os.path.join(self.image_cache_dir, unquote(file_name))
-
     def _get_or_download_image_bytes(self, image_url: str) -> bytes:
-        """Resolution order:
-        1. New-style cache key (URL-derived, unique per image)
-        2. Legacy directory variants (for migrated caches)
-        3. Download from network and save under new-style key
-        """
+        """Load image bytes from canonical cache, otherwise download and cache."""
         cache_path = self._get_cached_image_path(image_url)
         if os.path.exists(cache_path):
             logger.info("Image cache HIT: %s", os.path.basename(cache_path))
             with open(cache_path, "rb") as f:
                 return f.read()
-
-        if self.legacy_image_cache_dir:
-            legacy_new = os.path.join(self.legacy_image_cache_dir, os.path.basename(cache_path))
-            if os.path.exists(legacy_new):
-                logger.info("Image cache HIT (legacy dir): %s", os.path.basename(legacy_new))
-                data = legacy_new
-                with open(data, "rb") as f:
-                    image_bytes = f.read()
-                with open(cache_path, "wb") as f:
-                    f.write(image_bytes)
-                return image_bytes
-
-        if self.legacy_namespaced_image_cache_dir:
-            legacy_ns = os.path.join(
-                self.legacy_namespaced_image_cache_dir, os.path.basename(cache_path)
-            )
-            if os.path.exists(legacy_ns):
-                logger.info("Image cache HIT (legacy namespaced): %s", os.path.basename(legacy_ns))
-                with open(legacy_ns, "rb") as f:
-                    image_bytes = f.read()
-                with open(cache_path, "wb") as f:
-                    f.write(image_bytes)
-                return image_bytes
-
-        legacy_path = self._get_legacy_cached_image_path(image_url)
-        legacy_name = os.path.basename(legacy_path).lower()
-        if os.path.exists(legacy_path) and legacy_name not in self.GENERIC_THUMBNAIL_NAMES:
-            logger.info("Image cache HIT (legacy): %s", os.path.basename(legacy_path))
-            with open(legacy_path, "rb") as f:
-                image_bytes = f.read()
-            with open(cache_path, "wb") as f:
-                f.write(image_bytes)
-            return image_bytes
-
-        if self.legacy_image_cache_dir:
-            legacy_old = os.path.join(self.legacy_image_cache_dir, os.path.basename(legacy_path))
-            if os.path.exists(legacy_old) and legacy_name not in self.GENERIC_THUMBNAIL_NAMES:
-                logger.info("Image cache HIT (legacy dir + legacy name): %s", os.path.basename(legacy_old))
-                with open(legacy_old, "rb") as f:
-                    image_bytes = f.read()
-                with open(cache_path, "wb") as f:
-                    f.write(image_bytes)
-                return image_bytes
 
         logger.info("Image cache MISS: %s - downloading", os.path.basename(cache_path))
         try:

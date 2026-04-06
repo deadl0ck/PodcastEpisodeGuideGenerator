@@ -23,7 +23,6 @@ from podcasts.ra.page_constants import (
     COVER_IMAGE,
     EPISODE_CACHE_LOCATION,
     FULL_PDF_PATH,
-    LEGACY_EPISODE_CACHE_LOCATION,
     START_URL,
     TOC_FONT_COLOUR,
     ensure_cache_dirs,
@@ -78,7 +77,7 @@ class RAGuideMain(BaseGuideMain):
 
 
 def _coerce_episode(raw_episode: object, cache_key: str) -> Episode:
-    """Normalise a raw cache object (legacy or current) into an Episode instance."""
+    """Normalise a cached object into an Episode instance."""
     if isinstance(raw_episode, Episode):
         return raw_episode
 
@@ -91,21 +90,13 @@ def _coerce_episode(raw_episode: object, cache_key: str) -> Episode:
 
 
 def _load_episode_cache() -> dict[str, Episode]:
-    """Load and coerce the RA episode cache, falling back to the legacy RAMagGenPy cache."""
+    """Load and coerce the RA episode cache."""
     if os.path.exists(EPISODE_CACHE_LOCATION):
         with open(EPISODE_CACHE_LOCATION, "rb") as f:
             existing = pickle.load(f)
         return {
             str(key): _coerce_episode(value, str(key))
             for key, value in dict(existing).items()
-        }
-
-    if os.path.exists(LEGACY_EPISODE_CACHE_LOCATION):
-        with open(LEGACY_EPISODE_CACHE_LOCATION, "rb") as f:
-            legacy_cache = pickle.load(f)
-        return {
-            str(key): _coerce_episode(value, str(key))
-            for key, value in dict(legacy_cache).items()
         }
 
     return {}

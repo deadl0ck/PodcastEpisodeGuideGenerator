@@ -5,6 +5,15 @@ Inherits common PDF layout constants from podcasts.common.page_constants.
 import os
 from reportlab.lib import colors
 
+from cache_paths import (
+    ZTTP_CRAPVERTS_CACHE_FILENAME,
+    ZTTP_EPISODE_CACHE_FILENAME,
+    ZTTP_PROVIDER_KEY,
+    ZTTP_ZZAP_CACHE_FILENAME,
+    get_podcast_cache_file,
+    get_podcast_cache_root,
+    get_podcast_image_cache_dir,
+)
 from podcasts.common.page_constants import (
     PDF_LOCATION,
     TOC_FONT_SIZE,
@@ -15,12 +24,11 @@ from podcasts.common.page_constants import (
 FEED_URL = 'https://feed.podbean.com/zappedtothepast/feed.xml'
 
 # ZTTP cache directory structure
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-CACHE_ROOT = os.path.join(PROJECT_ROOT, '.cache', 'ZTTP')
-IMAGE_CACHE_LOCATION = os.path.join(CACHE_ROOT, 'images')
-EPISODE_CACHE_LOCATION = os.path.join(CACHE_ROOT, 'episode_cache.pkl')
-ZZAP_CACHE_LOCATION = os.path.join(CACHE_ROOT, 'zzap_cache.pkl')
-CRAPVERTS_CACHE_LOCATION = os.path.join(CACHE_ROOT, 'crapverts_cache.pkl')
+CACHE_ROOT = get_podcast_cache_root(ZTTP_PROVIDER_KEY)
+IMAGE_CACHE_LOCATION = get_podcast_image_cache_dir(ZTTP_PROVIDER_KEY)
+EPISODE_CACHE_LOCATION = get_podcast_cache_file(ZTTP_PROVIDER_KEY, ZTTP_EPISODE_CACHE_FILENAME)
+ZZAP_CACHE_LOCATION = get_podcast_cache_file(ZTTP_PROVIDER_KEY, ZTTP_ZZAP_CACHE_FILENAME)
+CRAPVERTS_CACHE_LOCATION = get_podcast_cache_file(ZTTP_PROVIDER_KEY, ZTTP_CRAPVERTS_CACHE_FILENAME)
 
 # ZTTP-specific PDF file name and path
 PDF_NAME = "ZTTP Episode Guide.pdf"

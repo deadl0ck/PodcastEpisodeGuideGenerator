@@ -6,30 +6,34 @@ import os
 
 from reportlab.lib import colors
 
-from cache_paths import get_podcast_cache_root, get_podcast_image_cache_dir
+from cache_paths import (
+    RA_EPISODE_CACHE_FILENAME,
+    RA_PROVIDER_KEY,
+    get_podcast_cache_file,
+    get_podcast_cache_root,
+    get_podcast_image_cache_dir,
+)
 from podcasts.common.page_constants import (
     PDF_LOCATION,
 )
 
-RA_PROVIDER_KEY = "RA"
 START_URL = "https://retroasylum.com/category/all-posts/podcasts/"
 
-# Keep filtering semantics from the legacy RA generator, but centralize in config.
+# Keep filtering semantics from the original RA generator, but centralize in config.
 REMOVED_COVER_SUFFIX = "RA_error.png"
 TEXT_TO_REMOVE = ("Paul Davies",)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-LEGACY_RA_DIR = os.path.join(PROJECT_ROOT, "RAMagGenPy")
-LEGACY_EPISODE_CACHE_LOCATION = os.path.join(LEGACY_RA_DIR, "episodes-cache.pkl")
+RA_REFERENCE_ASSET_DIR = os.path.join(PROJECT_ROOT, "RAMagGenPy")
 
 CACHE_ROOT = get_podcast_cache_root(RA_PROVIDER_KEY)
 IMAGE_CACHE_LOCATION = get_podcast_image_cache_dir(RA_PROVIDER_KEY)
-EPISODE_CACHE_LOCATION = os.path.join(CACHE_ROOT, "episodes_cache.pkl")
+EPISODE_CACHE_LOCATION = get_podcast_cache_file(RA_PROVIDER_KEY, RA_EPISODE_CACHE_FILENAME)
 
 PDF_NAME = "RA Episode Guide.pdf"
 FULL_PDF_PATH = f"{PDF_LOCATION}{os.sep}{PDF_NAME}"
 
-COVER_IMAGE = os.path.join(LEGACY_RA_DIR, "images", "RACover.png")
+COVER_IMAGE = os.path.join(RA_REFERENCE_ASSET_DIR, "images", "RACover.png")
 COVER_TEXT = "RETRO ASYLUM"
 COVER_LINK = "https://retroasylum.com/"
 COVER_FONT_COLOUR = colors.black
