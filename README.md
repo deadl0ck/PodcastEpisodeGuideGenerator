@@ -325,6 +325,7 @@ python run_guides.py --podcasts all --continue-on-error
 │   ├── twir/                # TWIR-specific modules (including qow/)
 │   ├── zttp/                # ZTTP-specific modules
 │   └── ra/                  # Retro Asylum–specific modules (scrapes retroasylum.com)
+│       └── assets/          # Local RA static assets (e.g., RACover.png)
 ├── scripts/                 # Convenience shell scripts (twir.sh, zttp.sh, ra.sh, all.sh)
 ├── .env                     # Environment variables (do not commit to source control)
 ├── .cache/
@@ -437,6 +438,7 @@ Both provider entrypoints (`podcasts/twir/main.py` and `podcasts/zttp/main.py`) 
 ### Retro Asylum (RA) specifics
 
 - **Data source**: RA episodes are scraped from `retroasylum.com` (no API keys required). An active internet connection is needed on the first run; subsequent runs use the local cache.
+- **Cover asset**: The RA cover image is stored locally at `podcasts/ra/assets/RACover.png`.
 - **Episode filtering**: Episodes whose cover image URL ends with `RA_error.png` are suppressed in both the TOC and episode pages. The filter list is configurable via `TEXT_TO_REMOVE` in `podcasts/ra/page_constants.py`.
 - **Cache behavior**: The generator reads and writes only provider-local cache paths under `.cache/<PROVIDER>/`.
 - **Network resilience**: If `retroasylum.com` is unreachable during page discovery, the generator falls back to the existing episode cache rather than aborting.
