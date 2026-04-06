@@ -12,7 +12,7 @@ import tempfile
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 
 class TestSanitizeCacheName(unittest.TestCase):
@@ -52,7 +52,7 @@ class TestGetCachedImagePath(unittest.TestCase):
 
     def _make_writer(self):
         from podcasts.twir.pdf_writer import PDFWriter
-        with patch("podcasts.twir.pdf_writer.Canvas"), patch("reportlab.pdfgen.canvas.Canvas"):
+        with patch("pdf_writer_base.Canvas"), patch("reportlab.pdfgen.canvas.Canvas"):
             writer = PDFWriter.__new__(PDFWriter)
             writer.listen_image = None
             writer.image_cache_dir = self.tmp_dir

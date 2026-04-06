@@ -4,19 +4,16 @@ import os
 from typing import Any
 
 from reportlab.lib import colors
-from reportlab.pdfgen.canvas import Canvas  # Backward-compatible test patch target.
 
 from cache_paths import IMAGE_CACHE_DIR, LEGACY_TWIR_IMAGE_CACHE_DIR, ensure_cache_dirs
+from podcasts.common.page_constants import DEFAULT_LETTERS_PER_LINE, TOC_BOOKMARK
 from podcasts.twir.page_constants import (
-    DEFAULT_FONT_BOLD,
-    DEFAULT_LETTERS_PER_LINE,
     FULL_PDF_PATH,
     QOW_FONT,
     QOW_FONT_COLOUR,
     QOW_LIST_BOOKMARK,
     QOW_LIST_FONT_SIZE,
     QOW_LIST_HEADING_FONT_COLOUR,
-    TOC_BOOKMARK,
     TOC_HEADING_FONT_COLOUR,
 )
 from pdf_writer_base import BasePDFWriter, PAGE_HEIGHT

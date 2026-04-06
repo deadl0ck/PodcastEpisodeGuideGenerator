@@ -14,7 +14,7 @@ from constants import get_provider_constants
 
 
 WORKSPACE_ROOT = Path(__file__).resolve().parent
-SUPPORTED_PODCASTS = ("twir", "zttp")
+SUPPORTED_PODCASTS = ("twir", "zttp", "ra")
 
 
 def _build_command(podcast_key: str) -> list[str]:
@@ -23,6 +23,8 @@ def _build_command(podcast_key: str) -> list[str]:
         return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / "twir" / "main.py")]
     if podcast_key == "zttp":
         return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / "zttp" / "main.py")]
+    if podcast_key == "ra":
+        return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / "ra" / "main.py")]
     raise ValueError(f"Unsupported podcast key: {podcast_key}")
 
 
@@ -58,7 +60,7 @@ def main() -> int:
     parser.add_argument(
         "--podcasts",
         default="twir",
-        help="Comma-separated list: twir,zttp or all (default: twir)",
+        help="Comma-separated list: twir,zttp,ra or all (default: twir)",
     )
     parser.add_argument(
         "--continue-on-error",

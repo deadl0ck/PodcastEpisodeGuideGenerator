@@ -10,16 +10,19 @@ from podcasts.common.runtime import configure_logging, get_test_run_settings
 from podcasts.twir.episode_page_builder import build_episode_pages
 from podcasts.common.guide_main_base import BaseGuideMain
 from podcasts.twir.episode import Episode
-from podcasts.twir.page_constants import (
-    COVER_FONT_COLOUR,
+from podcasts.common.page_constants import (
     COVER_FONT_SIZE,
-    COVER_IMAGE,
     COVER_IMAGE_WIDTH,
-    COVER_LINK,
     COVER_SUB_TEXT,
     COVER_SUB_TEXT_Y_CM,
-    COVER_TEXT,
     COVER_TEXT_Y_CM,
+    TOC_TEXT,
+)
+from podcasts.twir.page_constants import (
+    COVER_FONT_COLOUR,
+    COVER_IMAGE,
+    COVER_LINK,
+    COVER_TEXT,
     DEFAULT_FONT_BOLD,
     FULL_PDF_PATH,
     QOW_LIST_BOOKMARK,
@@ -30,7 +33,6 @@ from podcasts.twir.page_constants import (
     TOC_FONT_COLOUR,
     TOC_FONT_SIZE,
     TOC_SPACING_DELTA,
-    TOC_TEXT,
 )
 from podcasts.twir.twir_utils import TWIRUtils
 from podcasts.twir.pdf_writer import PDFWriter

@@ -6,30 +6,9 @@ import os
 from reportlab.lib import colors
 
 from podcasts.common.page_constants import (
-    COVER_FONT_SIZE,
-    COVER_IMAGE_WIDTH,
-    COVER_SUB_TEXT,
-    COVER_SUB_TEXT_Y_CM,
-    COVER_TEXT_Y_CM,
-    DEFAULT_FONT_BOLD,
-    DEFAULT_FONT_HEIGHT,
-    DEFAULT_FONT_WIDTH,
-    EPISODE_IMAGE_WIDTH,
-    EPISODE_TEXT_Y_CM,
-    LISTEN_IMAGE,
-    LISTEN_IMAGE_WIDTH,
-    LISTEN_IMAGE_Y,
-    NULL_LINK,
     PDF_LOCATION,
-    SUB_HEADING_FONT,
-    SUB_HEADING_FONT_SIZE,
-    SUB_HEADING_X,
-    SUB_HEADING_Y_DELTA,
-    SUBTLE_TEXT_COLOUR,
-    TOC_BOOKMARK,
     TOC_FONT_SIZE,
     TOC_SPACING_DELTA,
-    TOC_TEXT,
 )
 
 # ZTTP-specific RSS feed

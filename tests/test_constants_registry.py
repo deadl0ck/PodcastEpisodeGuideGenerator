@@ -21,6 +21,12 @@ class TestConstantsRegistry(unittest.TestCase):
         self.assertFalse(constants.output.csv_enabled)
         self.assertEqual(constants.feature_list.list_kind.value, "game_list")
 
+    def test_ra_constants(self):
+        constants = get_provider_constants("RA")
+        self.assertEqual(constants.provider_key, "RA")
+        self.assertFalse(constants.output.csv_enabled)
+        self.assertIsNone(constants.feature_list)
+
     def test_key_is_case_insensitive(self):
         constants = get_provider_constants("twir")
         self.assertEqual(constants.provider_key, "TWIR")

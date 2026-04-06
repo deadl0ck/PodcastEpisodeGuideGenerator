@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Any
 
 import praw
 
@@ -16,7 +15,7 @@ from env_var_utils import (
     REDDIT_USER_AGENT,
     REDDIT_USERNAME,
 )
-from podcasts.twir.page_constants import NULL_LINK
+from podcasts.common.page_constants import NULL_LINK
 from podcasts.twir.qow.qow_cache import QOWCache
 from podcasts.twir.qow.qow_constants import REDDIT_QUERY, REPLACEMENT_LIST, SUBREDDIT_NAME
 from podcasts.twir.qow.question_of_the_week import QOW

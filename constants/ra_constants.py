@@ -1,3 +1,5 @@
+"""PodcastConstants factory for the Retro Asylum provider."""
+
 from __future__ import annotations
 
 from constants.base_constants import BaseConstants
@@ -5,56 +7,49 @@ from constants.models import (
     CacheNamespaceConfig,
     CoverConfig,
     EpisodeLayoutConfig,
-    FeatureListConfig,
-    FeatureListKind,
     OutputConfig,
     PodcastConstants,
     TextConfig,
     TocConfig,
 )
 from podcasts.common.page_constants import (
-    COVER_SUB_TEXT,
     DEFAULT_FONT_BOLD,
-    EPISODE_TEXT_Y_CM,
-    LISTEN_IMAGE,
     LISTEN_IMAGE_WIDTH,
     LISTEN_IMAGE_Y,
     NULL_LINK,
+    PDF_LOCATION,
     SUB_HEADING_FONT,
     SUB_HEADING_FONT_SIZE,
     SUB_HEADING_X,
     SUB_HEADING_Y_DELTA,
     SUBTLE_TEXT_COLOUR,
+    TOC_FONT_SIZE,
+    TOC_SPACING_DELTA,
     TOC_TEXT,
 )
-from podcasts.zttp.page_constants import (
+from podcasts.ra.page_constants import (
+    COVER_FONT_COLOUR,
     COVER_IMAGE,
     COVER_LINK,
     COVER_TEXT,
     EPISODE_FONT_COLOUR,
     EPISODE_FONT_SIZE,
-    EPISODE_IMAGE_WIDTH,
-    GAME_LIST_BOOKMARK,
-    GAME_LIST_FONT_COLOUR,
-    GAME_LIST_FONT_SIZE,
-    GAME_LIST_SPACING_DELTA,
-    GAME_LIST_TEXT,
-    PDF_LOCATION,
+    EPISODE_IMAGE_HEIGHT,
+    LISTEN_IMAGE,
     PDF_NAME,
     SUB_HEADINGS_LETTERS_PER_LINE,
     TOC_BOOKMARK,
     TOC_FONT_COLOUR,
-    TOC_FONT_SIZE,
-    TOC_SPACING_DELTA,
 )
 
 _BASE = BaseConstants()
 
 
-def build_zttp_constants() -> PodcastConstants:
+def build_ra_constants() -> PodcastConstants:
+    """Build and return the PodcastConstants configuration for the RA provider."""
     return PodcastConstants(
-        provider_key="ZTTP",
-        display_name="Zapped to the Past",
+        provider_key="RA",
+        display_name="Retro Asylum",
         output=OutputConfig(
             pdf_name=PDF_NAME,
             pdf_location=PDF_LOCATION,
@@ -64,9 +59,9 @@ def build_zttp_constants() -> PodcastConstants:
         cover=CoverConfig(
             image_url=COVER_IMAGE,
             title_text=COVER_TEXT,
-            subtitle_text=COVER_SUB_TEXT,
+            subtitle_text="EPISODE GUIDE",
             title_font_size=_BASE.cover_font_size,
-            title_colour=_BASE.cover_font_colour,
+            title_colour=COVER_FONT_COLOUR,
             image_width=_BASE.cover_image_width,
             link_url=COVER_LINK,
             title_y=_BASE.cover_title_y,
@@ -83,15 +78,15 @@ def build_zttp_constants() -> PodcastConstants:
             jump_text="[Jump to TOC]",
         ),
         episode_layout=EpisodeLayoutConfig(
-            image_width=EPISODE_IMAGE_WIDTH,
-            title_y=EPISODE_TEXT_Y_CM,
+            image_width=EPISODE_IMAGE_HEIGHT,
+            title_y=29.7 - 1,
             title_font_size=EPISODE_FONT_SIZE,
             title_colour=EPISODE_FONT_COLOUR,
             heading_line_spacing=0.6,
-            description_y=29.2 - 2,
-            metadata_label_y=29.2 - 21,
-            metadata_value_y=29.2 - 22,
-            listen_label_y=LISTEN_IMAGE_Y - 2.8,
+            description_y=29.2 - 1,
+            metadata_label_y=29.2 - 24,
+            metadata_value_y=29.2 - 25,
+            listen_label_y=29.2 - 26,
             listen_image_url=LISTEN_IMAGE,
             listen_image_width=LISTEN_IMAGE_WIDTH,
             listen_image_y=LISTEN_IMAGE_Y,
@@ -106,20 +101,11 @@ def build_zttp_constants() -> PodcastConstants:
             subtle_colour=SUBTLE_TEXT_COLOUR,
             null_link=NULL_LINK,
         ),
-        feature_list=FeatureListConfig(
-            list_kind=FeatureListKind.GAME_LIST,
-            heading_text=GAME_LIST_TEXT,
-            heading_font_size=GAME_LIST_FONT_SIZE,
-            heading_colour=GAME_LIST_FONT_COLOUR,
-            row_font_size=GAME_LIST_FONT_SIZE,
-            row_colour=GAME_LIST_FONT_COLOUR,
-            spacing_delta=GAME_LIST_SPACING_DELTA,
-            bookmark_name=GAME_LIST_BOOKMARK,
-        ),
+        feature_list=None,
         cache=CacheNamespaceConfig(
-            provider_key="ZTTP",
+            provider_key="RA",
             image_dir_name="images",
-            pickle_keys=("episode_cache", "zzap_cache", "crapverts_cache"),
+            pickle_keys=("episodes_cache",),
             json_keys=(),
         ),
     )

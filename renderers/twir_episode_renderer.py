@@ -6,18 +6,13 @@ from typing import Any
 
 import requests
 
-from podcasts.twir.page_constants import (
-    CSV_LOCATION,
-    DEFAULT_FONT_BOLD,
+from podcasts.common.page_constants import (
     EPISODE_AIRDATE_Y,
     EPISODE_DESCRIPTION_Y,
-    EPISODE_FONT_COLOUR,
     EPISODE_FONT_SIZE,
-    EPISODE_HEADING_FONT_COLOUR,
     EPISODE_HEADING_LINE_SPACING,
     EPISODE_IMAGE_WIDTH,
     EPISODE_LISTEN_LABEL_Y,
-    EPISODE_QOW_Y,
     EPISODE_TEXT_Y_CM,
     EPISODE_YOUTUBE_LABEL_Y,
     HEADING_LETTERS_PER_LINE,
@@ -27,6 +22,13 @@ from podcasts.twir.page_constants import (
     SUB_HEADING_FONT,
     SUB_HEADING_FONT_SIZE,
     SUBTLE_TEXT_COLOUR,
+)
+from podcasts.twir.page_constants import (
+    CSV_LOCATION,
+    DEFAULT_FONT_BOLD,
+    EPISODE_FONT_COLOUR,
+    EPISODE_HEADING_FONT_COLOUR,
+    EPISODE_QOW_Y,
 )
 from podcasts.twir.qow.qow_constants import VALID_MISSING_QOW
 from renderers.episode_renderer_base import BaseEpisodeRenderer

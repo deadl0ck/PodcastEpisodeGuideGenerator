@@ -15,7 +15,7 @@ import unittest.mock
 import pickle
 import tempfile
 from podcasts.twir.qow.question_of_the_week import QOW, QUESTIONS_AND_EPISODES
-from podcasts.twir.page_constants import NULL_LINK
+from podcasts.common.page_constants import NULL_LINK
 
 
 class TestQOWInit(unittest.TestCase):

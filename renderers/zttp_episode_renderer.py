@@ -6,17 +6,19 @@ from typing import Any
 
 from reportlab.lib.units import cm
 
-from podcasts.zttp.page_constants import (
+from podcasts.common.page_constants import (
     DEFAULT_FONT_BOLD,
-    EPISODE_FONT_COLOUR,
-    EPISODE_FONT_SIZE,
-    EPISODE_IMAGE_WIDTH,
     EPISODE_TEXT_Y_CM,
     LISTEN_IMAGE,
     LISTEN_IMAGE_WIDTH,
     LISTEN_IMAGE_Y,
     SUB_HEADING_FONT_SIZE,
     SUBTLE_TEXT_COLOUR,
+)
+from podcasts.zttp.page_constants import (
+    EPISODE_FONT_COLOUR,
+    EPISODE_FONT_SIZE,
+    EPISODE_IMAGE_WIDTH,
     ZZAP_COVER_WIDTH,
 )
 from renderers.episode_renderer_base import BaseEpisodeRenderer

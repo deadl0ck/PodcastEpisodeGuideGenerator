@@ -5,21 +5,19 @@ import logging
 from typing import Any
 from urllib.parse import unquote, urlparse
 
-from reportlab.lib import colors
 
 from pdf_writer_base import BasePDFWriter, PAGE_HEIGHT
+from podcasts.common.page_constants import DEFAULT_FONT_BOLD, SUBTLE_TEXT_COLOUR
 from podcasts.zttp.page_constants import (
     PDF_LOCATION,
     PDF_NAME,
     IMAGE_CACHE_LOCATION,
-    DEFAULT_FONT_BOLD,
     GAME_LIST_BOOKMARK,
     JUMP_TO_TOC_FONT,
     JUMP_TO_TOC_TEXT,
     SUB_HEADINGS_LETTERS_PER_LINE,
     TOC_BOOKMARK,
     TOC_FONT_SIZE,
-    SUBTLE_TEXT_COLOUR,
 )
 
 

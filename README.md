@@ -3,6 +3,7 @@
 Generates PDF "magazine-style" episode guides for:
 - [This Week in Retro (TWIR)](https://www.youtube.com/@ThisWeekinRetro/videos)
 - [Zapped to the Past (ZTTP)](https://zappedtothepast.com/)
+- [Retro Asylum (RA)](https://retroasylum.com/)
 
 Each run produces:
 - A cover page
@@ -32,8 +33,9 @@ Each run produces:
 ## Prerequisites
 
 - Python 3.9 or later (tested on 3.9 and 3.10)
-- A **Google API key** with the YouTube Data API v3 enabled (TWIR)
-- A **Reddit account** with a registered script application (TWIR QoW scraping)
+- A **Google API key** with the YouTube Data API v3 enabled (TWIR only)
+- A **Reddit account** with a registered script application (TWIR QoW only)
+- Internet access to `retroasylum.com` for the RA guide (no API keys required)
 
 ---
 
@@ -229,6 +231,7 @@ To create a Reddit app:
 
 ```bash
 python run_guides.py --podcasts twir
+python run_guides.py --podcasts ra
 ```
 
 If your venv is not active, run with the venv Python directly:
@@ -242,6 +245,7 @@ If your venv is not active, run with the venv Python directly:
 
 ```powershell
 python run_guides.py --podcasts twir
+python run_guides.py --podcasts ra
 ```
 
 If your venv is not active:
@@ -254,6 +258,8 @@ If your venv is not active:
 Output files are written to your Desktop:
 - `~/Desktop/TWiR Episode Guide.pdf` — the full episode guide PDF
 - `~/Desktop/TWiR_Data.csv` — CSV of episode data including questions
+- `~/Desktop/ZTTP Episode Guide.pdf` — the ZTTP episode guide PDF
+- `~/Desktop/RA Episode Guide.pdf` — the Retro Asylum episode guide PDF
 
 ## Utility Scripts
 
@@ -262,6 +268,7 @@ Convenience scripts are available in `scripts/` for common runs:
 ```bash
 ./scripts/zttp.sh   # Runs: python run_guides.py --podcasts zttp
 ./scripts/twir.sh   # Runs: python run_guides.py --podcasts twir
+./scripts/ra.sh     # Runs: python run_guides.py --podcasts ra
 ./scripts/all.sh    # Runs: python run_guides.py --podcasts all
 ```
 
@@ -279,7 +286,9 @@ Each selected podcast generates its own PDF output file (no combined PDF).
 ```bash
 python run_guides.py --podcasts twir
 python run_guides.py --podcasts zttp
+python run_guides.py --podcasts ra
 python run_guides.py --podcasts twir,zttp
+python run_guides.py --podcasts twir,ra
 python run_guides.py --podcasts all
 ```
 
@@ -295,9 +304,9 @@ python run_guides.py --podcasts all --continue-on-error
 
 ```
 .
-├── run_guides.py            # Unified entry point for TWIR and ZTTP guide generation
+├── run_guides.py            # Unified entry point for TWIR, ZTTP, and RA guide generation
 ├── data_retriever.py        # Fetches episodes from YouTube API and Podbean RSS feed
-├── cache_paths.py           # Centralized cache locations under .cache/TWIR and .cache/ZTTP
+├── cache_paths.py           # Centralized cache locations under .cache/<PROVIDER>
 ├── env_var_utils.py         # Loads and validates environment variables from .env
 ├── .env.example             # Safe starter template for local configuration
 ├── requirements.txt         # Runtime dependency list for local installation
@@ -307,18 +316,23 @@ python run_guides.py --podcasts all --continue-on-error
 ├── podcasts/
 │   ├── common/              # Shared base classes, runtime helpers, and constants
 │   ├── twir/                # TWIR-specific modules (including qow/)
-│   └── zttp/                # ZTTP-specific modules
+│   ├── zttp/                # ZTTP-specific modules
+│   └── ra/                  # Retro Asylum–specific modules (scrapes retroasylum.com)
+├── scripts/                 # Convenience shell scripts (twir.sh, zttp.sh, ra.sh, all.sh)
 ├── .env                     # Environment variables (do not commit to source control)
 ├── .cache/
 │   ├── TWIR/
 │   │   ├── images/          # TWIR image cache
 │   │   ├── qow_cache.pkl    # TWIR QoW cache file
 │   │   └── episodes.json    # Reserved for future TWIR episode metadata cache
-│   └── ZTTP/
-│       ├── images/          # ZTTP image cache
-│       ├── episode_cache.pkl
-│       ├── zzap_cache.pkl
-│       └── crapverts_cache.pkl
+│   ├── ZTTP/
+│   │   ├── images/          # ZTTP image cache
+│   │   ├── episode_cache.pkl
+│   │   ├── zzap_cache.pkl
+│   │   └── crapverts_cache.pkl
+│   └── RA/
+│       ├── images/          # RA image cache
+│       └── episodes_cache.pkl
 └── image_cache/             # Legacy image cache path (still read for migration)
 ```
 
@@ -351,6 +365,7 @@ Images (episode thumbnails, cover, listen button) are cached in the provider-spe
 Current standardized cache locations are:
 - `.cache/TWIR/images/`
 - `.cache/ZTTP/images/`
+- `.cache/RA/images/`
 Legacy files in `image_cache/` are still detected and migrated automatically.
 
 Cache filenames are derived from the full URL to ensure uniqueness across episodes:
@@ -406,6 +421,13 @@ Both provider entrypoints (`podcasts/twir/main.py` and `podcasts/zttp/main.py`) 
 - `runtime.py` for logging bootstrap and test-run env parsing
 - `guide_main_base.py` for common create/write/save orchestration
 
+### Retro Asylum (RA) specifics
+
+- **Data source**: RA episodes are scraped from `retroasylum.com` (no API keys required). An active internet connection is needed on the first run; subsequent runs use the local cache.
+- **Episode filtering**: Episodes whose cover image URL ends with `RA_error.png` are suppressed in both the TOC and episode pages. The filter list is configurable via `TEXT_TO_REMOVE` in `podcasts/ra/page_constants.py`.
+- **Legacy cache migration**: If a cache from the standalone `RAMagGenPy` tool is found at `RAMagGenPy/episodes-cache.pkl`, it is automatically coerced into the current format on first run.
+- **Network resilience**: If `retroasylum.com` is unreachable during page discovery, the generator falls back to the existing episode cache rather than aborting.
+
 ---
 
 ## Unit Tests
@@ -455,6 +477,8 @@ Current test coverage includes:
 - `podcasts.twir.twir_utils` parsing helpers
 - `podcasts.twir.pdf_writer` cache key/sanitization and text splitting helpers
 - `podcasts.twir.qow` model and cache loading behavior
+- `podcasts.ra.episode` episode number extraction (standard and Bytesize formats)
+- `podcasts.ra.pdf_writer` episode filtering logic
 - constants registry and ZTTP caching flows
 
 ---

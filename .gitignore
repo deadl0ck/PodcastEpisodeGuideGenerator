@@ -6,3 +6,5 @@ __pycache__/
 qow_cache.pkl
 image_cache/
 .DS_Store
+RAMagGenPy/image_cache.pkl
+RAMagGenPy/image_cache/
