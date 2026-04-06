@@ -18,6 +18,7 @@ Each run produces:
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Running](#running)
+- [Utility Scripts](#utility-scripts)
 - [Unified Multi-Podcast Run](#unified-multi-podcast-run)
 - [Project Structure](#project-structure)
 - [Logging](#logging)
@@ -253,6 +254,22 @@ If your venv is not active:
 Output files are written to your Desktop:
 - `~/Desktop/TWiR Episode Guide.pdf` — the full episode guide PDF
 - `~/Desktop/TWiR_Data.csv` — CSV of episode data including questions
+
+## Utility Scripts
+
+Convenience scripts are available in `scripts/` for common runs:
+
+```bash
+./scripts/zttp.sh   # Runs: python run_guides.py --podcasts zttp
+./scripts/twir.sh   # Runs: python run_guides.py --podcasts twir
+./scripts/all.sh    # Runs: python run_guides.py --podcasts all
+```
+
+If needed, make scripts executable first:
+
+```bash
+chmod +x scripts/*.sh
+```
 
 ## Unified Multi-Podcast Run
 
