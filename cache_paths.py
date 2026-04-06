@@ -5,7 +5,12 @@ from __future__ import annotations
 import os
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-CACHE_ROOT = os.path.join(PROJECT_ROOT, '.cache')
+
+# Canonical directory names.
+CACHE_DIRNAME = '.cache'
+IMAGE_CACHE_DIRNAME = 'images'
+
+CACHE_ROOT = os.path.join(PROJECT_ROOT, CACHE_DIRNAME)
 
 # Canonical provider keys.
 TWIR_PROVIDER_KEY = 'TWIR'
@@ -28,7 +33,7 @@ def get_podcast_cache_root(podcast_key: str) -> str:
 
 def get_podcast_image_cache_dir(podcast_key: str) -> str:
     """Return the provider-specific image cache directory."""
-    return os.path.join(get_podcast_cache_root(podcast_key), 'images')
+    return os.path.join(get_podcast_cache_root(podcast_key), IMAGE_CACHE_DIRNAME)
 
 
 def get_podcast_cache_file(podcast_key: str, filename: str) -> str:

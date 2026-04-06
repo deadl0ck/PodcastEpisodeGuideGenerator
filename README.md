@@ -59,7 +59,7 @@ pip install -r requirements.txt
 # 4) Create .env from the example in this README
 
 # 5) Run the app
-python run_guides.py --podcasts twir
+python run_guides.py --podcasts [twir | zttp | ra | all]
 ```
 
 ### Windows (PowerShell)
@@ -78,13 +78,14 @@ pip install -r requirements.txt
 # 4) Create .env from the example in this README
 
 # 5) Run the app
-python run_guides.py --podcasts twir
+python run_guides.py --podcasts [twir | zttp | ra | all]
 ```
 
 Output files are written to your Desktop (podcast dependent):
 - `TWiR Episode Guide.pdf`
 - `TWiR_Data.csv`
 - `ZTTP Episode Guide.pdf`
+- `RA Episode Guide.pdf`
 
 ---
 
@@ -230,29 +231,27 @@ To create a Reddit app:
 ### macOS / Linux
 
 ```bash
-python run_guides.py --podcasts twir
-python run_guides.py --podcasts ra
+python run_guides.py --podcasts [twir | zttp | ra | all]
 ```
 
 If your venv is not active, run with the venv Python directly:
 
 ```bash
-./.venv/bin/python run_guides.py --podcasts twir
-./.venv310/bin/python run_guides.py --podcasts twir
+./.venv/bin/python run_guides.py --podcasts [twir | zttp | ra | all]
+./.venv310/bin/python run_guides.py --podcasts [twir | zttp | ra | all]
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-python run_guides.py --podcasts twir
-python run_guides.py --podcasts ra
+python run_guides.py --podcasts [twir | zttp | ra | all]
 ```
 
 If your venv is not active:
 
 ```powershell
-.\.venv\Scripts\python.exe run_guides.py --podcasts twir
-.\.venv310\Scripts\python.exe run_guides.py --podcasts twir
+.\.venv\Scripts\python.exe run_guides.py --podcasts [twir | zttp | ra | all]
+.\.venv310\Scripts\python.exe run_guides.py --podcasts [twir | zttp | ra | all]
 ```
 
 Output files are written to your Desktop:
@@ -292,7 +291,7 @@ CLI selection tokens are lower-case:
 Internally, provider IDs are centralized in `cache_paths.py` as upper-case keys (`TWIR`, `ZTTP`, `RA`) and the runner derives CLI tokens from those constants.
 
 ```bash
-python run_guides.py --podcasts twir
+python run_guides.py --podcasts [twir | zttp | ra | all]
 python run_guides.py --podcasts zttp
 python run_guides.py --podcasts ra
 python run_guides.py --podcasts twir,zttp
@@ -357,8 +356,8 @@ The app uses Python's standard `logging` module throughout (instead of `print`).
 Examples:
 
 ```bash
-LOG_LEVEL=INFO python run_guides.py --podcasts twir
-LOG_LEVEL=DEBUG python run_guides.py --podcasts twir
+LOG_LEVEL=INFO python run_guides.py --podcasts [twir | zttp | ra | all]
+LOG_LEVEL=DEBUG python run_guides.py --podcasts [twir | zttp | ra | all]
 ```
 
 ---
@@ -378,6 +377,7 @@ Only provider-local cache folders are used at runtime.
 
 Cache policy:
 - Cache paths are built via shared helpers in `cache_paths.py`.
+- Cache directory names are centralized in `cache_paths.py` (`CACHE_DIRNAME`, `IMAGE_CACHE_DIRNAME`).
 - Cache filenames are centralized in `cache_paths.py` (for TWIR, ZTTP, and RA).
 - Legacy cross-provider and legacy-path fallback reads have been removed; cache reads/writes stay within the active provider namespace.
 
@@ -417,7 +417,7 @@ The two static images hosted on `i.ibb.co` (which may be blocked in some environ
 Use environment variables to run a short test selection (default count is 5):
 
 ```bash
-GUIDE_TEST_RUN=true GUIDE_TEST_COUNT=5 python run_guides.py --podcasts twir
+GUIDE_TEST_RUN=true GUIDE_TEST_COUNT=5 python run_guides.py --podcasts [twir | zttp | ra | all]
 ```
 
 ### QoW cache

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cache_paths import ZTTP_PROVIDER_KEY
+from cache_paths import IMAGE_CACHE_DIRNAME, ZTTP_PROVIDER_KEY
 from constants.base_constants import BaseConstants
 from constants.models import (
     CacheNamespaceConfig,
@@ -119,7 +119,7 @@ def build_zttp_constants() -> PodcastConstants:
         ),
         cache=CacheNamespaceConfig(
             provider_key=ZTTP_PROVIDER_KEY,
-            image_dir_name="images",
+            image_dir_name=IMAGE_CACHE_DIRNAME,
             pickle_keys=("episode_cache", "zzap_cache", "crapverts_cache"),
             json_keys=(),
         ),

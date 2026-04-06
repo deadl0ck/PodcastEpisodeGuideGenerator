@@ -4,6 +4,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from cache_paths import ZTTP_CRAPVERTS_CACHE_FILENAME
+
 
 class TestZTTPCRapvertsCaching(unittest.TestCase):
     def test_uses_cache_when_present(self):
@@ -16,7 +18,7 @@ class TestZTTPCRapvertsCaching(unittest.TestCase):
             raise
 
         with tempfile.TemporaryDirectory() as tmp_dir:
-            cache_file = os.path.join(tmp_dir, "crapverts_cache.pkl")
+            cache_file = os.path.join(tmp_dir, ZTTP_CRAPVERTS_CACHE_FILENAME)
             cached_data = {12: EpisodeCrapvert("Episode 12", ["https://example.com/a.jpg"])}
             with open(cache_file, "wb") as f:
                 pickle.dump(cached_data, f)

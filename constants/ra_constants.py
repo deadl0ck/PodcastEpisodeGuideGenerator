@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from cache_paths import RA_PROVIDER_KEY
+from cache_paths import IMAGE_CACHE_DIRNAME, RA_PROVIDER_KEY
 from constants.base_constants import BaseConstants
 from constants.models import (
     CacheNamespaceConfig,
@@ -105,7 +105,7 @@ def build_ra_constants() -> PodcastConstants:
         feature_list=None,
         cache=CacheNamespaceConfig(
             provider_key=RA_PROVIDER_KEY,
-            image_dir_name="images",
+            image_dir_name=IMAGE_CACHE_DIRNAME,
             pickle_keys=("episodes_cache",),
             json_keys=(),
         ),

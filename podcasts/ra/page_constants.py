@@ -7,6 +7,7 @@ import os
 from reportlab.lib import colors
 
 from cache_paths import (
+    IMAGE_CACHE_DIRNAME,
     RA_EPISODE_CACHE_FILENAME,
     RA_PROVIDER_KEY,
     get_podcast_cache_file,
@@ -33,7 +34,7 @@ EPISODE_CACHE_LOCATION = get_podcast_cache_file(RA_PROVIDER_KEY, RA_EPISODE_CACH
 PDF_NAME = "RA Episode Guide.pdf"
 FULL_PDF_PATH = f"{PDF_LOCATION}{os.sep}{PDF_NAME}"
 
-COVER_IMAGE = os.path.join(RA_REFERENCE_ASSET_DIR, "images", "RACover.png")
+COVER_IMAGE = os.path.join(RA_REFERENCE_ASSET_DIR, IMAGE_CACHE_DIRNAME, "RACover.png")
 COVER_TEXT = "RETRO ASYLUM"
 COVER_LINK = "https://retroasylum.com/"
 COVER_FONT_COLOUR = colors.black

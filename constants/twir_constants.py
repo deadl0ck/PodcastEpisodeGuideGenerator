@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from cache_paths import TWIR_PROVIDER_KEY
+from cache_paths import IMAGE_CACHE_DIRNAME, TWIR_PROVIDER_KEY
 from constants.base_constants import BaseConstants
 from constants.models import (
     CacheNamespaceConfig,
@@ -128,7 +128,7 @@ def build_twir_constants() -> PodcastConstants:
         ),
         cache=CacheNamespaceConfig(
             provider_key=TWIR_PROVIDER_KEY,
-            image_dir_name="images",
+            image_dir_name=IMAGE_CACHE_DIRNAME,
             pickle_keys=("qow_cache",),
             json_keys=("episodes",),
         ),
