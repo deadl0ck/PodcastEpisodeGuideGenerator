@@ -8,7 +8,8 @@ import logging
 from dotenv import load_dotenv
 
 ENV_VARS: dict[str, str | None] = {}
-GOOGLE_API_KEY = "GOOGLE_API_KEY"
+YOUTUBE_API_KEY = "YOUTUBE_API_KEY"
+GOOGLE_API_KEY = "GOOGLE_API_KEY"  # Legacy alias retained for backward compatibility.
 YOUTUBE_PLAYLIST_ID = "YOUTUBE_PLAYLIST_ID"
 PODBEAN_RSS_FEED = 'PODBEAN_RSS_FEED'
 REDDIT_CLIENT_ID = "REDDIT_CLIENT_ID"
@@ -17,8 +18,9 @@ REDDIT_USERNAME = "REDDIT_USERNAME"
 REDDIT_PASSWORD = "REDDIT_PASSWORD"
 REDDIT_USER_AGENT = "REDDIT_USER_AGENT"
 LOG_LEVEL = "LOG_LEVEL"
+TENP_GEMINI_API_KEY = "TENP_GEMINI_API_KEY"
 # All names listed here are checked for presence at startup
-ENV_VAR_NAMES = [GOOGLE_API_KEY,
+ENV_VAR_NAMES = [YOUTUBE_API_KEY,
                  YOUTUBE_PLAYLIST_ID,
                  PODBEAN_RSS_FEED,
                  REDDIT_CLIENT_ID,
@@ -28,7 +30,7 @@ ENV_VAR_NAMES = [GOOGLE_API_KEY,
                  REDDIT_USER_AGENT]
 
 # Optional env vars are loaded and logged but not required for startup.
-OPTIONAL_ENV_VAR_NAMES = [LOG_LEVEL]
+OPTIONAL_ENV_VAR_NAMES = [LOG_LEVEL, TENP_GEMINI_API_KEY]
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +91,11 @@ class EnvVarUtils:
     @staticmethod
     def populate_env_vars() -> None:
         """Refresh the in-memory cache from the current process environment."""
+        # Primary key name for TWIR YouTube API.
+        ENV_VARS[YOUTUBE_API_KEY] = os.getenv(YOUTUBE_API_KEY) or os.getenv(GOOGLE_API_KEY)
         for current in ENV_VAR_NAMES + OPTIONAL_ENV_VAR_NAMES:
+            if current == YOUTUBE_API_KEY:
+                continue
             ENV_VARS[current] = os.getenv(current)
 
     @staticmethod

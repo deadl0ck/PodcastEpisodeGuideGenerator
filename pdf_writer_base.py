@@ -16,11 +16,13 @@ from __future__ import annotations
 
 import io
 import os
+import shutil
 import tempfile
 import logging
 from typing import Any
 from urllib.parse import unquote, urlparse
 
+from cache_paths import get_shared_image_cache_dir
 import numpy as np
 import requests
 from PIL import Image
@@ -63,7 +65,10 @@ class BasePDFWriter:
         self.canvas = Canvas(pdf_path, pagesize=A4)
         self.listen_image = None
         self.image_cache_dir = image_cache_dir
+        self.shared_image_cache_dir = get_shared_image_cache_dir()
         os.makedirs(image_cache_dir, exist_ok=True)
+        os.makedirs(self.shared_image_cache_dir, exist_ok=True)
+        self._seed_shared_cache_from_provider_caches()
 
     # ------------------------------------------------------------------ #
     # Image cache infrastructure                                           #
@@ -91,12 +96,38 @@ class BasePDFWriter:
         return sanitized or "cached_image"
 
     def _get_or_download_image_bytes(self, image_url: str) -> bytes:
-        """Load image bytes from canonical cache, otherwise download and cache."""
+        """Load image bytes from provider/shared caches, otherwise download and cache."""
         cache_path = self._get_cached_image_path(image_url)
+        cache_filename = os.path.basename(cache_path)
         if os.path.exists(cache_path):
             logger.info("Image cache HIT: %s", os.path.basename(cache_path))
             with open(cache_path, "rb") as f:
                 return f.read()
+
+        shared_cache_path = os.path.join(self._get_shared_image_cache_dir(), cache_filename)
+        if os.path.exists(shared_cache_path):
+            logger.info("Image cache HIT (shared): %s", cache_filename)
+            logger.info("Reused shared image %s for provider cache %s", cache_filename, self.image_cache_dir)
+            with open(shared_cache_path, "rb") as f:
+                image_bytes = f.read()
+            self._write_cache_bytes(cache_path, image_bytes)
+            return image_bytes
+
+        other_provider_cache_path = self._find_other_provider_cache_path(cache_filename)
+        if other_provider_cache_path is not None:
+            logger.info("Image cache HIT (other provider): %s", cache_filename)
+            source_provider_cache = os.path.dirname(other_provider_cache_path)
+            logger.info(
+                "Reused image %s from %s into shared cache and provider cache %s",
+                cache_filename,
+                source_provider_cache,
+                self.image_cache_dir,
+            )
+            with open(other_provider_cache_path, "rb") as f:
+                image_bytes = f.read()
+            self._write_cache_bytes(shared_cache_path, image_bytes)
+            self._write_cache_bytes(cache_path, image_bytes)
+            return image_bytes
 
         logger.info("Image cache MISS: %s - downloading", os.path.basename(cache_path))
         try:
@@ -107,9 +138,71 @@ class BasePDFWriter:
             logger.error("Image download FAILED for URL: %s", image_url)
             raise
 
-        with open(cache_path, "wb") as f:
-            f.write(image_bytes)
+        self._write_cache_bytes(cache_path, image_bytes)
+        self._write_cache_bytes(shared_cache_path, image_bytes)
         return image_bytes
+
+    def _get_shared_image_cache_dir(self) -> str:
+        shared_dir = getattr(self, "shared_image_cache_dir", None)
+        if shared_dir:
+            return shared_dir
+        return get_shared_image_cache_dir()
+
+    @staticmethod
+    def _write_cache_bytes(path: str, image_bytes: bytes) -> None:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "wb") as handle:
+            handle.write(image_bytes)
+
+    def _find_other_provider_cache_path(self, cache_filename: str) -> str | None:
+        current_provider_cache = os.path.dirname(self.image_cache_dir)
+        shared_provider_cache = os.path.dirname(self._get_shared_image_cache_dir())
+        cache_root = os.path.dirname(current_provider_cache)
+        if not os.path.isdir(cache_root):
+            return None
+
+        with os.scandir(cache_root) as entries:
+            for entry in entries:
+                if not entry.is_dir():
+                    continue
+                if entry.path in {current_provider_cache, shared_provider_cache}:
+                    continue
+
+                candidate = os.path.join(entry.path, "images", cache_filename)
+                if os.path.exists(candidate):
+                    return candidate
+        return None
+
+    def _seed_shared_cache_from_provider_caches(self) -> None:
+        """Populate shared cache with files found in provider image caches."""
+        shared_dir = self._get_shared_image_cache_dir()
+        shared_provider_cache = os.path.dirname(shared_dir)
+        cache_root = os.path.dirname(shared_provider_cache)
+        if not os.path.isdir(cache_root):
+            return
+
+        copied = 0
+        with os.scandir(cache_root) as entries:
+            for entry in entries:
+                if not entry.is_dir() or entry.path == shared_provider_cache:
+                    continue
+
+                image_dir = os.path.join(entry.path, "images")
+                if not os.path.isdir(image_dir):
+                    continue
+
+                with os.scandir(image_dir) as files:
+                    for image_file in files:
+                        if not image_file.is_file():
+                            continue
+                        target_path = os.path.join(shared_dir, image_file.name)
+                        if os.path.exists(target_path):
+                            continue
+                        shutil.copy2(image_file.path, target_path)
+                        copied += 1
+
+        if copied > 0:
+            logger.info("Seeded shared image cache with %s file(s)", copied)
 
     # ------------------------------------------------------------------ #
     # Canvas operations                                                    #

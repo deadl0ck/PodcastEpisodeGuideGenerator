@@ -27,9 +27,19 @@ class TestConstantsRegistry(unittest.TestCase):
         self.assertFalse(constants.output.csv_enabled)
         self.assertIsNone(constants.feature_list)
 
+    def test_tenp_constants(self):
+        constants = get_provider_constants("10P")
+        self.assertEqual(constants.provider_key, "10P")
+        self.assertFalse(constants.output.csv_enabled)
+        self.assertIsNone(constants.feature_list)
+
     def test_key_is_case_insensitive(self):
         constants = get_provider_constants("twir")
         self.assertEqual(constants.provider_key, "TWIR")
+
+    def test_tenp_key_is_case_insensitive(self):
+        constants = get_provider_constants("10p")
+        self.assertEqual(constants.provider_key, "10P")
 
     def test_unknown_provider_raises(self):
         with self.assertRaises(ValueError):

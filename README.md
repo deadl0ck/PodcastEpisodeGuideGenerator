@@ -4,6 +4,7 @@ Generates PDF "magazine-style" episode guides for:
 - [This Week in Retro (TWIR)](https://www.youtube.com/@ThisWeekinRetro/videos)
 - [Zapped to the Past (ZTTP)](https://zappedtothepast.com/)
 - [Retro Asylum (RA)](https://retroasylum.com/)
+- [Ten Pence Arcade (10P)](https://www.tenpencearcade.com/)
 
 Each run produces:
 - A cover page
@@ -24,6 +25,7 @@ Each run produces:
 - [Project Structure](#project-structure)
 - [Logging](#logging)
 - [Image Cache](#image-cache)
+- [Ten Pence AI Extraction](#ten-pence-ai-extraction)
 - [Developer Notes](#developer-notes)
 - [Unit Tests](#unit-tests)
 - [Dependencies](#dependencies)
@@ -34,6 +36,7 @@ Each run produces:
 
 - Python 3.9 or later (tested on 3.9 and 3.10)
 - A **Google API key** with the YouTube Data API v3 enabled (TWIR only)
+- Optional: a **Gemini API key** for Ten Pence next-month-game extraction
 - A **Reddit account** with a registered script application (TWIR QoW only)
 - Internet access to `retroasylum.com` for the RA guide (no API keys required)
 
@@ -59,7 +62,7 @@ pip install -r requirements.txt
 # 4) Create .env from the example in this README
 
 # 5) Run the app
-python run_guides.py --podcasts [twir | zttp | ra | all]
+python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 ```
 
 ### Windows (PowerShell)
@@ -78,7 +81,7 @@ pip install -r requirements.txt
 # 4) Create .env from the example in this README
 
 # 5) Run the app
-python run_guides.py --podcasts [twir | zttp | ra | all]
+python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 ```
 
 Output files are written to your Desktop (podcast dependent):
@@ -86,6 +89,7 @@ Output files are written to your Desktop (podcast dependent):
 - `TWiR_Data.csv`
 - `ZTTP Episode Guide.pdf`
 - `RA Episode Guide.pdf`
+- `Ten Pence Arcade Episode Guide.pdf`
 
 ---
 
@@ -173,7 +177,7 @@ Required variables:
 
 | Variable               | Description                                                   |
 |------------------------|---------------------------------------------------------------|
-| `GOOGLE_API_KEY`       | Google API key with the YouTube Data API v3 enabled (TWIR)   |
+| `YOUTUBE_API_KEY`      | YouTube Data API key (TWIR)                                   |
 | `YOUTUBE_PLAYLIST_ID`  | ID of the TWIR YouTube playlist                               |
 | `PODBEAN_RSS_FEED`     | Full URL of the Podbean RSS feed for TWIR                    |
 | `REDDIT_CLIENT_ID`     | Reddit app client ID (TWIR QoW) — from reddit.com/prefs/apps |
@@ -187,10 +191,15 @@ Optional variables:
 | Variable    | Description |
 |-------------|-------------|
 | `LOG_LEVEL` | Logging verbosity. Valid values are Python logging levels such as `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Defaults to `INFO` if omitted or invalid. |
+| `TENP_GEMINI_API_KEY` | Optional Gemini API key used for Ten Pence next-month-game extraction. If omitted, the provider falls back to cache/overrides and `No Game`. |
+
+Compatibility note:
+- `YOUTUBE_API_KEY` is the canonical TWIR key name.
+- `GOOGLE_API_KEY` is still accepted as a legacy fallback for older local `.env` files.
 
 Example `.env`:
 ```
-GOOGLE_API_KEY=your_google_api_key_here
+YOUTUBE_API_KEY=your_youtube_api_key_here
 YOUTUBE_PLAYLIST_ID=PLPVR2wA1dpHZR7p2GL5rgB7ybTMxtgPPB
 PODBEAN_RSS_FEED=https://feed.podbean.com/TWIR/feed.xml
 REDDIT_CLIENT_ID=your_reddit_client_id
@@ -199,10 +208,11 @@ REDDIT_USERNAME=your_reddit_username
 REDDIT_PASSWORD=your_reddit_password
 REDDIT_USER_AGENT=script:question_search:v1.0 (by u/your_username)
 LOG_LEVEL=INFO
+TENP_GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 How to get the values:
-- `GOOGLE_API_KEY`: Create in Google Cloud Console and enable YouTube Data API v3 for that project.
+- `YOUTUBE_API_KEY`: Create in Google Cloud Console and enable YouTube Data API v3 for that project.
 - `YOUTUBE_PLAYLIST_ID`: Use the playlist ID from the TWiR YouTube URL (already provided in the example).
 - `PODBEAN_RSS_FEED`: Use the RSS feed URL (already provided in the example).
 - `REDDIT_*`: Create a Reddit app at https://www.reddit.com/prefs/apps and choose `script`.
@@ -216,6 +226,8 @@ Runtime behavior:
 - Startup logs include all loaded env vars.
 - Sensitive values (keys containing `PASSWORD`, `SECRET`, `API_KEY`, `TOKEN`) are masked in logs.
 - `LOG_LEVEL` controls application verbosity.
+- For TWIR, `YOUTUBE_API_KEY` is preferred and `GOOGLE_API_KEY` is accepted as a fallback alias.
+- For Ten Pence AI extraction, invalid/missing `TENP_GEMINI_API_KEY` does not fail the run; extraction is disabled for that run and cache/overrides/`No Game` are used.
 
 To create a Reddit app:
 1. Go to https://www.reddit.com/prefs/apps
@@ -231,27 +243,27 @@ To create a Reddit app:
 ### macOS / Linux
 
 ```bash
-python run_guides.py --podcasts [twir | zttp | ra | all]
+python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 ```
 
 If your venv is not active, run with the venv Python directly:
 
 ```bash
-./.venv/bin/python run_guides.py --podcasts [twir | zttp | ra | all]
-./.venv310/bin/python run_guides.py --podcasts [twir | zttp | ra | all]
+./.venv/bin/python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
+./.venv310/bin/python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-python run_guides.py --podcasts [twir | zttp | ra | all]
+python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 ```
 
 If your venv is not active:
 
 ```powershell
-.\.venv\Scripts\python.exe run_guides.py --podcasts [twir | zttp | ra | all]
-.\.venv310\Scripts\python.exe run_guides.py --podcasts [twir | zttp | ra | all]
+.\.venv\Scripts\python.exe run_guides.py --podcasts [twir | zttp | ra | 10p | all]
+.\.venv310\Scripts\python.exe run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 ```
 
 Output files are written to your Desktop:
@@ -259,6 +271,7 @@ Output files are written to your Desktop:
 - `~/Desktop/TWiR_Data.csv` — CSV of episode data including questions
 - `~/Desktop/ZTTP Episode Guide.pdf` — the ZTTP episode guide PDF
 - `~/Desktop/RA Episode Guide.pdf` — the Retro Asylum episode guide PDF
+- `~/Desktop/Ten Pence Arcade Episode Guide.pdf` — the Ten Pence Arcade episode guide PDF
 
 ## Utility Scripts
 
@@ -268,6 +281,7 @@ Convenience scripts are available in `scripts/` for common runs:
 ./scripts/zttp.sh   # Runs: python run_guides.py --podcasts zttp
 ./scripts/twir.sh   # Runs: python run_guides.py --podcasts twir
 ./scripts/ra.sh     # Runs: python run_guides.py --podcasts ra
+./scripts/10p.sh    # Runs: python run_guides.py --podcasts 10p
 ./scripts/all.sh    # Runs: python run_guides.py --podcasts all
 ```
 
@@ -286,16 +300,19 @@ CLI selection tokens are lower-case:
 - `twir`
 - `zttp`
 - `ra`
+- `10p`
 - `all`
 
-Internally, provider IDs are centralized in `cache_paths.py` as upper-case keys (`TWIR`, `ZTTP`, `RA`) and the runner derives CLI tokens from those constants.
+Internally, provider IDs are centralized in `cache_paths.py` as upper-case keys (`TWIR`, `ZTTP`, `RA`, `10P`) and the runner derives CLI tokens from those constants.
 
 ```bash
-python run_guides.py --podcasts [twir | zttp | ra | all]
+python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 python run_guides.py --podcasts zttp
 python run_guides.py --podcasts ra
+python run_guides.py --podcasts 10p
 python run_guides.py --podcasts twir,zttp
 python run_guides.py --podcasts twir,ra
+python run_guides.py --podcasts twir,10p
 python run_guides.py --podcasts all
 ```
 
@@ -311,7 +328,7 @@ python run_guides.py --podcasts all --continue-on-error
 
 ```
 .
-├── run_guides.py            # Unified entry point for TWIR, ZTTP, and RA guide generation
+├── run_guides.py            # Unified entry point for TWIR, ZTTP, RA, and 10P guide generation
 ├── data_retriever.py        # Fetches episodes from YouTube API and Podbean RSS feed
 ├── cache_paths.py           # Centralized cache locations under .cache/<PROVIDER>
 ├── env_var_utils.py         # Loads and validates environment variables from .env
@@ -324,23 +341,30 @@ python run_guides.py --podcasts all --continue-on-error
 │   ├── common/              # Shared base classes, runtime helpers, and constants
 │   ├── twir/                # TWIR-specific modules (including qow/)
 │   ├── zttp/                # ZTTP-specific modules
-│   └── ra/                  # Retro Asylum–specific modules (scrapes retroasylum.com)
-│       └── assets/          # Local RA static assets (e.g., RACover.png)
-├── scripts/                 # Convenience shell scripts (twir.sh, zttp.sh, ra.sh, all.sh)
+│   ├── ra/                  # Retro Asylum–specific modules (scrapes retroasylum.com)
+│   │   └── assets/          # Local RA static assets (e.g., RACover.png)
+│   └── tenp/                # Ten Pence Arcade–specific modules
+├── scripts/                 # Convenience shell scripts (twir.sh, zttp.sh, ra.sh, 10p.sh, all.sh)
 ├── .env                     # Environment variables (do not commit to source control)
 ├── .cache/
+│   ├── _SHARED/
+│   │   └── images/          # Shared image cache reused across providers
 │   ├── TWIR/
 │   │   ├── images/          # TWIR image cache
 │   │   ├── qow_cache.pkl    # TWIR QoW cache file
-│   │   └── episodes.json    # Reserved for future TWIR episode metadata cache
+│   │   └── episodes.json    # TWIR episode metadata cache
 │   ├── ZTTP/
 │   │   ├── images/          # ZTTP image cache
 │   │   ├── episode_cache.pkl
 │   │   ├── zzap_cache.pkl
 │   │   └── crapverts_cache.pkl
-│   └── RA/
+│   ├── RA/
 │       ├── images/          # RA image cache
 │       └── episodes_cache.pkl
+│   └── 10P/
+│       ├── images/          # Ten Pence image cache
+│       ├── episode_cache.pkl
+│       └── next_month_game_cache.pkl
 └── image_cache/             # Optional manual image staging area (not read automatically)
 ```
 
@@ -357,30 +381,45 @@ The app uses Python's standard `logging` module throughout (instead of `print`).
 Examples:
 
 ```bash
-LOG_LEVEL=INFO python run_guides.py --podcasts [twir | zttp | ra | all]
-LOG_LEVEL=DEBUG python run_guides.py --podcasts [twir | zttp | ra | all]
+LOG_LEVEL=INFO python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
+LOG_LEVEL=DEBUG python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 ```
 
 ---
 
 ## Image Cache
 
-Images (episode thumbnails, cover, listen button) are cached in the provider-specific `.cache/.../images/` directories on first download. Subsequent runs use the local copy, which:
+Images (episode thumbnails, cover, listen button) are cached on first download and reused on subsequent runs.
+
+Cache locations:
+- Provider-local cache: `.cache/<PROVIDER>/images/`
+- Shared cross-provider cache: `.cache/_SHARED/images/`
+
+The runtime checks caches in this order:
+1. Active provider cache (`.cache/<PROVIDER>/images/`)
+2. Shared cache (`.cache/_SHARED/images/`)
+3. Other provider caches (cross-provider fallback)
+4. Network download
+
+When an image is found in another provider cache, it is copied into shared cache and reused.
+
+This behavior:
 
 - Significantly speeds up generation
+- Reduces duplicate downloads across providers
 - Allows blocked or unavailable images to be substituted manually
 
 Current standardized cache locations are:
+- `.cache/_SHARED/images/`
 - `.cache/TWIR/images/`
 - `.cache/ZTTP/images/`
 - `.cache/RA/images/`
-Only provider-local cache folders are used at runtime.
+- `.cache/10P/images/`
 
 Cache policy:
 - Cache paths are built via shared helpers in `cache_paths.py`.
 - Cache directory names are centralized in `cache_paths.py` (`CACHE_DIRNAME`, `IMAGE_CACHE_DIRNAME`).
-- Cache filenames are centralized in `cache_paths.py` (for TWIR, ZTTP, and RA).
-- Legacy cross-provider and legacy-path fallback reads have been removed; cache reads/writes stay within the active provider namespace.
+- Cache filenames are deterministic and URL-derived, so the same image URL maps to the same cache filename across providers.
 
 Cache filenames are derived from the full URL to ensure uniqueness across episodes:
 ```
@@ -399,8 +438,11 @@ Image download FAILED for URL: https://i.ibb.co/ccL0XZPJ/TWIR-Reddit-logo.jpg
 Download the image manually and copy it to the provider image cache directory using the filename from the `Image cache MISS:` line.
 
 Preferred manual-copy locations are:
+- `.cache/_SHARED/images/` (recommended for reuse by all providers)
 - `.cache/TWIR/images/`
+- `.cache/10P/images/`
 - `.cache/ZTTP/images/`
+- `.cache/RA/images/`
 
 The two static images hosted on `i.ibb.co` (which may be blocked in some environments) are:
 
@@ -411,6 +453,25 @@ The two static images hosted on `i.ibb.co` (which may be blocked in some environ
 
 ---
 
+## Ten Pence AI Extraction
+
+Ten Pence uses AI only for next-month-game extraction, and only when there is no override/cached value.
+
+Resolution order per episode:
+1. Existing next-month-game cache value
+2. Hardcoded override in `podcasts/tenp/page_constants.py`
+3. Gemini extraction (if `TENP_GEMINI_API_KEY` is configured and valid)
+4. Fallback value `No Game`
+
+Failure handling:
+- Missing key: AI is skipped, run continues.
+- Invalid key/API errors: AI is disabled for the rest of the run and processing continues.
+- Any extraction exception: warning is logged and fallback is used.
+
+The run never fails solely because Gemini extraction fails.
+
+---
+
 ## Developer Notes
 
 ### Test mode
@@ -418,7 +479,7 @@ The two static images hosted on `i.ibb.co` (which may be blocked in some environ
 Use environment variables to run a short test selection (default count is 5):
 
 ```bash
-GUIDE_TEST_RUN=true GUIDE_TEST_COUNT=5 python run_guides.py --podcasts [twir | zttp | ra | all]
+GUIDE_TEST_RUN=true GUIDE_TEST_COUNT=5 python run_guides.py --podcasts [twir | zttp | ra | 10p | all]
 ```
 
 ### QoW cache
@@ -431,7 +492,7 @@ If an exception occurs while building an episode page, the TWIR builder retries 
 
 ### Shared main/runtime flow
 
-Both provider entrypoints (`podcasts/twir/main.py` and `podcasts/zttp/main.py`) now use shared helpers from `podcasts/common/`:
+Provider entrypoints use shared helpers from `podcasts/common/` (TWIR, ZTTP, RA, and 10P):
 - `runtime.py` for logging bootstrap and test-run env parsing
 - `guide_main_base.py` for common create/write/save orchestration
 

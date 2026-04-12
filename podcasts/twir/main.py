@@ -5,10 +5,12 @@ from __future__ import annotations
 import logging
 
 from data_retriever import DataRetriever
-from env_var_utils import EnvVarUtils, GOOGLE_API_KEY, PODBEAN_RSS_FEED, YOUTUBE_PLAYLIST_ID
+from cache_paths import EPISODE_CACHE_FILE, ensure_cache_dirs
+from env_var_utils import EnvVarUtils, PODBEAN_RSS_FEED, YOUTUBE_API_KEY, YOUTUBE_PLAYLIST_ID
 from podcasts.common.runtime import configure_logging, get_test_run_settings
 from podcasts.twir.episode_page_builder import build_episode_pages
 from podcasts.common.guide_main_base import BaseGuideMain
+from podcasts.twir.episode_cache import TWIREpisodeCache
 from podcasts.twir.episode import Episode
 from podcasts.common.page_constants import (
     COVER_FONT_SIZE,
@@ -101,9 +103,20 @@ class TWIRGuideMain(BaseGuideMain):
 def load_episodes() -> list[Episode]:
     """Load and normalize TWIR episode data from YouTube and Podbean."""
     EnvVarUtils.init()
+    ensure_cache_dirs()
+
+    cached_episodes = TWIREpisodeCache.load(EPISODE_CACHE_FILE)
+    if cached_episodes:
+        logger.info("TWIR episode cache HIT: %s entries", len(cached_episodes))
+        cached_episodes.sort(key=lambda x: x.episode_number, reverse=True)
+        if TEST_RUN:
+            del cached_episodes[TEST_RUN_COUNT:]
+        return cached_episodes
+
+    logger.info("TWIR episode cache MISS: fetching from remote sources")
 
     youtube_items = DataRetriever.get_youtube_playlist_items(
-        EnvVarUtils.get_env_var(GOOGLE_API_KEY),
+        EnvVarUtils.get_env_var(YOUTUBE_API_KEY),
         EnvVarUtils.get_env_var(YOUTUBE_PLAYLIST_ID),
     )
     podcast_items = DataRetriever.get_podcast_mp3_links_and_air_dates(
@@ -128,6 +141,8 @@ def load_episodes() -> list[Episode]:
         ))
 
     all_episodes.sort(key=lambda x: x.episode_number, reverse=True)
+    TWIREpisodeCache.save(EPISODE_CACHE_FILE, all_episodes)
+    logger.info("TWIR episode cache updated: %s entries", len(all_episodes))
     if TEST_RUN:
         del all_episodes[TEST_RUN_COUNT:]
 

@@ -8,3 +8,4 @@ reportlab
 praw
 beautifulsoup4
 lxml
+google-genai

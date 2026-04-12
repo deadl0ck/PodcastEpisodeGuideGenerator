@@ -16,6 +16,8 @@ CACHE_ROOT = os.path.join(PROJECT_ROOT, CACHE_DIRNAME)
 TWIR_PROVIDER_KEY = 'TWIR'
 ZTTP_PROVIDER_KEY = 'ZTTP'
 RA_PROVIDER_KEY = 'RA'
+TENP_PROVIDER_KEY = '10P'
+SHARED_PROVIDER_KEY = '_SHARED'
 
 # Canonical cache filenames used across providers.
 QOW_CACHE_FILENAME = 'qow_cache.pkl'
@@ -24,6 +26,8 @@ ZTTP_EPISODE_CACHE_FILENAME = 'episode_cache.pkl'
 ZTTP_ZZAP_CACHE_FILENAME = 'zzap_cache.pkl'
 ZTTP_CRAPVERTS_CACHE_FILENAME = 'crapverts_cache.pkl'
 RA_EPISODE_CACHE_FILENAME = 'episodes_cache.pkl'
+TENP_EPISODE_CACHE_FILENAME = 'episode_cache.pkl'
+TENP_NEXT_MONTH_GAME_CACHE_FILENAME = 'next_month_game_cache.pkl'
 
 
 def get_podcast_cache_root(podcast_key: str) -> str:
@@ -34,6 +38,11 @@ def get_podcast_cache_root(podcast_key: str) -> str:
 def get_podcast_image_cache_dir(podcast_key: str) -> str:
     """Return the provider-specific image cache directory."""
     return os.path.join(get_podcast_cache_root(podcast_key), IMAGE_CACHE_DIRNAME)
+
+
+def get_shared_image_cache_dir() -> str:
+    """Return the shared image cache directory used across all providers."""
+    return get_podcast_image_cache_dir(SHARED_PROVIDER_KEY)
 
 
 def get_podcast_cache_file(podcast_key: str, filename: str) -> str:

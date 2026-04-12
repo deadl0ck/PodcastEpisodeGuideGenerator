@@ -19,11 +19,14 @@ class TestRunGuidesSelection(unittest.TestCase):
     def test_multiple_values_with_ra(self):
         self.assertEqual(_parse_podcast_selection("twir,ra"), ["twir", "ra"])
 
+    def test_multiple_values_with_tenp(self):
+        self.assertEqual(_parse_podcast_selection("twir,10p"), ["twir", "10p"])
+
     def test_all_expands(self):
-        self.assertEqual(_parse_podcast_selection("all"), ["twir", "zttp", "ra"])
+        self.assertEqual(_parse_podcast_selection("all"), ["twir", "zttp", "ra", "10p"])
 
     def test_duplicates_removed(self):
-        self.assertEqual(_parse_podcast_selection("twir,all,twir"), ["twir", "zttp", "ra"])
+        self.assertEqual(_parse_podcast_selection("twir,all,twir"), ["twir", "zttp", "ra", "10p"])
 
     def test_unknown_raises(self):
         with self.assertRaises(ValueError):

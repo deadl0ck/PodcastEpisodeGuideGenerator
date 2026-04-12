@@ -140,5 +140,58 @@ class TestSplitIntoMultiline(unittest.TestCase):
             self.assertIn(word, rejoined)
 
 
+class TestSharedImageCacheReuse(unittest.TestCase):
+    def setUp(self):
+        self.tmp_dir = tempfile.mkdtemp()
+        self.cache_root = os.path.join(self.tmp_dir, ".cache")
+        self.twir_images = os.path.join(self.cache_root, "TWIR", "images")
+        self.tenp_images = os.path.join(self.cache_root, "10P", "images")
+        self.shared_images = os.path.join(self.cache_root, "_SHARED", "images")
+        os.makedirs(self.twir_images, exist_ok=True)
+        os.makedirs(self.tenp_images, exist_ok=True)
+        os.makedirs(self.shared_images, exist_ok=True)
+
+    def _make_writer(self):
+        from podcasts.twir.pdf_writer import PDFWriter
+
+        with patch("pdf_writer_base.Canvas"), patch("reportlab.pdfgen.canvas.Canvas"):
+            writer = PDFWriter.__new__(PDFWriter)
+            writer.listen_image = None
+            writer.image_cache_dir = self.tenp_images
+            writer.shared_image_cache_dir = self.shared_images
+            return writer
+
+    def test_reuses_image_from_other_provider_cache(self):
+        writer = self._make_writer()
+        url = "https://i.ibb.co/NWmMHcH/Listen-Now.jpg"
+        filename = os.path.basename(writer._get_cached_image_path(url))
+        source_path = os.path.join(self.twir_images, filename)
+        with open(source_path, "wb") as handle:
+            handle.write(b"shared-bytes")
+
+        with patch("pdf_writer_base.requests.get") as mock_get:
+            data = writer._get_or_download_image_bytes(url)
+
+        self.assertEqual(data, b"shared-bytes")
+        self.assertFalse(mock_get.called)
+        self.assertTrue(os.path.exists(os.path.join(self.tenp_images, filename)))
+        self.assertTrue(os.path.exists(os.path.join(self.shared_images, filename)))
+
+    def test_reuses_image_from_shared_cache(self):
+        writer = self._make_writer()
+        url = "https://i.ibb.co/NWmMHcH/Listen-Now.jpg"
+        filename = os.path.basename(writer._get_cached_image_path(url))
+        shared_path = os.path.join(self.shared_images, filename)
+        with open(shared_path, "wb") as handle:
+            handle.write(b"shared-cache-bytes")
+
+        with patch("pdf_writer_base.requests.get") as mock_get:
+            data = writer._get_or_download_image_bytes(url)
+
+        self.assertEqual(data, b"shared-cache-bytes")
+        self.assertFalse(mock_get.called)
+        self.assertTrue(os.path.exists(os.path.join(self.tenp_images, filename)))
+
+
 if __name__ == "__main__":
     unittest.main()

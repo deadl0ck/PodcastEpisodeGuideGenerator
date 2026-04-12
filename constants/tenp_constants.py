@@ -1,0 +1,109 @@
+from __future__ import annotations
+
+from cache_paths import IMAGE_CACHE_DIRNAME, TENP_PROVIDER_KEY
+from constants.base_constants import BaseConstants
+from constants.models import (
+    CacheNamespaceConfig,
+    CoverConfig,
+    EpisodeLayoutConfig,
+    OutputConfig,
+    PodcastConstants,
+    TextConfig,
+    TocConfig,
+)
+from podcasts.common.page_constants import (
+    COVER_SUB_TEXT,
+    DEFAULT_FONT_BOLD,
+    LISTEN_IMAGE,
+    LISTEN_IMAGE_WIDTH,
+    LISTEN_IMAGE_Y,
+    NULL_LINK,
+    SUB_HEADING_FONT,
+    SUB_HEADING_FONT_SIZE,
+    SUB_HEADING_X,
+    SUB_HEADING_Y_DELTA,
+    SUBTLE_TEXT_COLOUR,
+    TOC_TEXT,
+)
+from podcasts.tenp.page_constants import (
+    COVER_IMAGE,
+    COVER_LINK,
+    COVER_TEXT,
+    EPISODE_FONT_COLOUR,
+    EPISODE_FONT_SIZE,
+    EPISODE_IMAGE_WIDTH,
+    PDF_LOCATION,
+    PDF_NAME,
+    SUB_HEADINGS_LETTERS_PER_LINE,
+    TOC_BOOKMARK,
+    TOC_FONT_COLOUR,
+    TOC_FONT_SIZE,
+    TOC_SPACING_DELTA,
+)
+
+_BASE = BaseConstants()
+
+
+def build_tenp_constants() -> PodcastConstants:
+    return PodcastConstants(
+        provider_key=TENP_PROVIDER_KEY,
+        display_name="Ten Pence Arcade",
+        output=OutputConfig(
+            pdf_name=PDF_NAME,
+            pdf_location=PDF_LOCATION,
+            csv_enabled=False,
+            csv_name=None,
+        ),
+        cover=CoverConfig(
+            image_url=COVER_IMAGE,
+            title_text=COVER_TEXT,
+            subtitle_text=COVER_SUB_TEXT,
+            title_font_size=_BASE.cover_font_size,
+            title_colour=_BASE.cover_font_colour,
+            image_width=_BASE.cover_image_width,
+            link_url=COVER_LINK,
+            title_y=_BASE.cover_title_y,
+            subtitle_y=_BASE.cover_subtitle_y,
+        ),
+        toc=TocConfig(
+            title_text=TOC_TEXT,
+            font_name=DEFAULT_FONT_BOLD,
+            font_size=TOC_FONT_SIZE,
+            font_colour=TOC_FONT_COLOUR,
+            spacing_delta=TOC_SPACING_DELTA,
+            bookmark_name=TOC_BOOKMARK,
+            heading_colour=None,
+            jump_text="[Jump to TOC]",
+        ),
+        episode_layout=EpisodeLayoutConfig(
+            image_width=EPISODE_IMAGE_WIDTH,
+            title_y=28,
+            title_font_size=EPISODE_FONT_SIZE,
+            title_colour=EPISODE_FONT_COLOUR,
+            heading_line_spacing=0.6,
+            description_y=29.2 - 2,
+            metadata_label_y=29.2 - 25,
+            metadata_value_y=29.2 - 25.5,
+            listen_label_y=2.2,
+            listen_image_url=LISTEN_IMAGE,
+            listen_image_width=LISTEN_IMAGE_WIDTH,
+            listen_image_y=LISTEN_IMAGE_Y,
+        ),
+        text=TextConfig(
+            sub_heading_font=SUB_HEADING_FONT,
+            sub_heading_size=SUB_HEADING_FONT_SIZE,
+            sub_heading_x=SUB_HEADING_X,
+            sub_heading_y_delta=SUB_HEADING_Y_DELTA,
+            body_chars_per_line=SUB_HEADINGS_LETTERS_PER_LINE,
+            heading_chars_per_line=None,
+            subtle_colour=SUBTLE_TEXT_COLOUR,
+            null_link=NULL_LINK,
+        ),
+        feature_list=None,
+        cache=CacheNamespaceConfig(
+            provider_key=TENP_PROVIDER_KEY,
+            image_dir_name=IMAGE_CACHE_DIRNAME,
+            pickle_keys=("episode_cache", "next_month_game_cache"),
+            json_keys=(),
+        ),
+    )
