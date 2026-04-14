@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from env_var_utils import EnvVarUtils, TENP_GEMINI_API_KEY
+from env_var_utils import EnvVarUtils, TEN_P_GEMINI_API_KEY
 
 logger = logging.getLogger(__name__)
 
@@ -25,9 +25,9 @@ class BasicAI:
         if self._client is not None:
             return self._client
 
-        api_key = EnvVarUtils.get_env_var(TENP_GEMINI_API_KEY)
+        api_key = EnvVarUtils.get_env_var(TEN_P_GEMINI_API_KEY)
         if not api_key:
-            logger.warning("TENP Gemini API key is not configured; skipping AI extraction")
+            logger.warning("TEN_P Gemini API key is not configured; skipping AI extraction")
             return None
 
         try:
@@ -55,6 +55,6 @@ class BasicAI:
             message = str(exc)
             logger.warning("TenP AI extraction failed; falling back to 'No Game': %s", message)
             if "API key not valid" in message or "API_KEY_INVALID" in message:
-                logger.warning("TENP_GEMINI_API_KEY appears invalid; disabling AI extraction for this run")
+                logger.warning("TEN_P_GEMINI_API_KEY appears invalid; disabling AI extraction for this run")
                 self._disabled_for_run = True
             return "No Game"

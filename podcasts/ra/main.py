@@ -9,7 +9,7 @@ import pickle
 from bs4 import BeautifulSoup
 
 from podcasts.common.guide_main_base import BaseGuideMain
-from podcasts.common.runtime import configure_logging, get_test_run_settings
+from podcasts.common.runtime import configure_logging, get_test_run_settings, initialize_provider_runtime
 from podcasts.ra.episode import Episode
 from podcasts.ra.html_utils import HTMLUtils
 from podcasts.common.page_constants import (
@@ -162,6 +162,7 @@ def load_episodes() -> list[Episode]:
 
 
 def main() -> None:
+    initialize_provider_runtime()
     writer = PDFWriter()
     app = RAGuideMain(writer)
     app.create_and_save_magazine(COVER_IMAGE, load_episodes())

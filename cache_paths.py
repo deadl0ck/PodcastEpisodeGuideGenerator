@@ -16,7 +16,8 @@ CACHE_ROOT = os.path.join(PROJECT_ROOT, CACHE_DIRNAME)
 TWIR_PROVIDER_KEY = 'TWIR'
 ZTTP_PROVIDER_KEY = 'ZTTP'
 RA_PROVIDER_KEY = 'RA'
-TENP_PROVIDER_KEY = '10P'
+TEN_P_PROVIDER_KEY = '10P'
+RGDS_PROVIDER_KEY = 'RGDS'
 SHARED_PROVIDER_KEY = '_SHARED'
 
 # Canonical cache filenames used across providers.
@@ -26,8 +27,10 @@ ZTTP_EPISODE_CACHE_FILENAME = 'episode_cache.pkl'
 ZTTP_ZZAP_CACHE_FILENAME = 'zzap_cache.pkl'
 ZTTP_CRAPVERTS_CACHE_FILENAME = 'crapverts_cache.pkl'
 RA_EPISODE_CACHE_FILENAME = 'episodes_cache.pkl'
-TENP_EPISODE_CACHE_FILENAME = 'episode_cache.pkl'
-TENP_NEXT_MONTH_GAME_CACHE_FILENAME = 'next_month_game_cache.pkl'
+TEN_P_EPISODE_CACHE_FILENAME = 'episode_cache.pkl'
+TEN_P_NEXT_MONTH_GAME_CACHE_FILENAME = 'next_month_game_cache.pkl'
+RGDS_EPISODE_CACHE_FILENAME = 'episodes.json'
+RGDS_AUTH_CACHE_FILENAME = 'auth.json'
 
 
 def get_podcast_cache_root(podcast_key: str) -> str:

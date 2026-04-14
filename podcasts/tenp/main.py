@@ -16,7 +16,7 @@ from podcasts.common.page_constants import (
     DEFAULT_FONT_BOLD,
     TOC_TEXT,
 )
-from podcasts.common.runtime import configure_logging, get_test_run_settings
+from podcasts.common.runtime import configure_logging, get_test_run_settings, initialize_provider_runtime
 from podcasts.tenp.basic_ai import BasicAI
 from podcasts.tenp.episode import Episode
 from podcasts.tenp.next_months_game_cache import NextMonthsGameCache
@@ -236,6 +236,7 @@ def load_episodes() -> list[Episode]:
 
 
 def main() -> None:
+    initialize_provider_runtime()
     writer = PDFWriter()
     app = TenPGuideMain(writer)
     app.create_and_save_magazine(COVER_IMAGE, load_episodes())

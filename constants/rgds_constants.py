@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from cache_paths import IMAGE_CACHE_DIRNAME, TEN_P_PROVIDER_KEY
+import os
+
+from cache_paths import IMAGE_CACHE_DIRNAME, RGDS_PROVIDER_KEY
 from constants.base_constants import BaseConstants
 from constants.models import (
     CacheNamespaceConfig,
@@ -25,16 +27,17 @@ from podcasts.common.page_constants import (
     SUBTLE_TEXT_COLOUR,
     TOC_TEXT,
 )
-from podcasts.tenp.page_constants import (
-    COVER_IMAGE,
+from podcasts.rgds.page_constants import (
+    COVER_FONT_COLOUR,
     COVER_LINK,
     COVER_TEXT,
     EPISODE_FONT_COLOUR,
     EPISODE_FONT_SIZE,
     EPISODE_IMAGE_WIDTH,
-    PDF_LOCATION,
+    FULL_PDF_PATH,
+    JUMP_TO_TOC_TEXT,
     PDF_NAME,
-    SUB_HEADINGS_LETTERS_PER_LINE,
+    RELEASED_TEXT_Y_CM,
     TOC_BOOKMARK,
     TOC_FONT_COLOUR,
     TOC_FONT_SIZE,
@@ -44,22 +47,24 @@ from podcasts.tenp.page_constants import (
 _BASE = BaseConstants()
 
 
-def build_tenp_constants() -> PodcastConstants:
+def build_rgds_constants() -> PodcastConstants:
+    pdf_location = os.path.dirname(FULL_PDF_PATH)
+
     return PodcastConstants(
-        provider_key=TEN_P_PROVIDER_KEY,
-        display_name="Ten Pence Arcade",
+        provider_key=RGDS_PROVIDER_KEY,
+        display_name="Retro Game Discussion Show",
         output=OutputConfig(
             pdf_name=PDF_NAME,
-            pdf_location=PDF_LOCATION,
+            pdf_location=pdf_location,
             csv_enabled=False,
             csv_name=None,
         ),
         cover=CoverConfig(
-            image_url=COVER_IMAGE,
+            image_url="",
             title_text=COVER_TEXT,
             subtitle_text=COVER_SUB_TEXT,
             title_font_size=_BASE.cover_font_size,
-            title_colour=_BASE.cover_font_colour,
+            title_colour=COVER_FONT_COLOUR,
             image_width=_BASE.cover_image_width,
             link_url=COVER_LINK,
             title_y=_BASE.cover_title_y,
@@ -73,17 +78,17 @@ def build_tenp_constants() -> PodcastConstants:
             spacing_delta=TOC_SPACING_DELTA,
             bookmark_name=TOC_BOOKMARK,
             heading_colour=None,
-            jump_text="[Jump to TOC]",
+            jump_text=JUMP_TO_TOC_TEXT,
         ),
         episode_layout=EpisodeLayoutConfig(
             image_width=EPISODE_IMAGE_WIDTH,
-            title_y=28,
+            title_y=28.5,
             title_font_size=EPISODE_FONT_SIZE,
             title_colour=EPISODE_FONT_COLOUR,
             heading_line_spacing=0.6,
-            description_y=29.2 - 2,
-            metadata_label_y=29.2 - 25,
-            metadata_value_y=29.2 - 25.5,
+            description_y=29.2 - 1.5,
+            metadata_label_y=24.5,
+            metadata_value_y=RELEASED_TEXT_Y_CM,
             listen_label_y=2.2,
             listen_image_url=LISTEN_IMAGE,
             listen_image_width=LISTEN_IMAGE_WIDTH,
@@ -94,16 +99,16 @@ def build_tenp_constants() -> PodcastConstants:
             sub_heading_size=SUB_HEADING_FONT_SIZE,
             sub_heading_x=SUB_HEADING_X,
             sub_heading_y_delta=SUB_HEADING_Y_DELTA,
-            body_chars_per_line=SUB_HEADINGS_LETTERS_PER_LINE,
+            body_chars_per_line=90,
             heading_chars_per_line=None,
             subtle_colour=SUBTLE_TEXT_COLOUR,
             null_link=NULL_LINK,
         ),
         feature_list=None,
         cache=CacheNamespaceConfig(
-            provider_key=TEN_P_PROVIDER_KEY,
+            provider_key=RGDS_PROVIDER_KEY,
             image_dir_name=IMAGE_CACHE_DIRNAME,
-            pickle_keys=("episode_cache", "next_month_game_cache"),
-            json_keys=(),
+            pickle_keys=("auth",),
+            json_keys=("episodes",),
         ),
     )

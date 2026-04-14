@@ -18,7 +18,12 @@ REDDIT_USERNAME = "REDDIT_USERNAME"
 REDDIT_PASSWORD = "REDDIT_PASSWORD"
 REDDIT_USER_AGENT = "REDDIT_USER_AGENT"
 LOG_LEVEL = "LOG_LEVEL"
-TENP_GEMINI_API_KEY = "TENP_GEMINI_API_KEY"
+TEN_P_GEMINI_API_KEY = "TEN_P_GEMINI_API_KEY"
+RGDS_CLIENT_ID = "RGDS_CLIENT_ID"
+RGDS_CLIENT_SECRET = "RGDS_CLIENT_SECRET"
+RGDS_REDIRECT_URI = "RGDS_REDIRECT_URI"
+RGDS_SHOW_ID = "RGDS_SHOW_ID"
+RGDS_REFRESH_TOKEN = "RGDS_REFRESH_TOKEN"
 # All names listed here are checked for presence at startup
 ENV_VAR_NAMES = [YOUTUBE_API_KEY,
                  YOUTUBE_PLAYLIST_ID,
@@ -30,7 +35,14 @@ ENV_VAR_NAMES = [YOUTUBE_API_KEY,
                  REDDIT_USER_AGENT]
 
 # Optional env vars are loaded and logged but not required for startup.
-OPTIONAL_ENV_VAR_NAMES = [LOG_LEVEL, TENP_GEMINI_API_KEY]
+OPTIONAL_ENV_VAR_NAMES = [LOG_LEVEL, TEN_P_GEMINI_API_KEY]
+OPTIONAL_ENV_VAR_NAMES.extend([
+    RGDS_CLIENT_ID,
+    RGDS_CLIENT_SECRET,
+    RGDS_REDIRECT_URI,
+    RGDS_SHOW_ID,
+    RGDS_REFRESH_TOKEN,
+])
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +55,14 @@ class EnvVarUtils:
     @staticmethod
     def init() -> None:
         """Load variables from .env, validate required values, and log them safely."""
+        EnvVarUtils.init_and_log()
+        EnvVarUtils.check_env_vars()
+
+    @staticmethod
+    def init_and_log() -> None:
+        """Load variables from .env and log them safely without enforcing required fields."""
         load_dotenv()
         EnvVarUtils.populate_env_vars()
-        EnvVarUtils.check_env_vars()
         for s in EnvVarUtils.get_env_vars_as_string_list():
             logger.info(s)
 
@@ -109,9 +126,14 @@ class EnvVarUtils:
     @staticmethod
     def check_env_vars() -> None:
         """Exit the process when required environment variables are missing."""
+        EnvVarUtils.check_required_env_vars(ENV_VAR_NAMES)
+
+    @staticmethod
+    def check_required_env_vars(required_env_vars: list[str]) -> None:
+        """Exit the process when any provided required environment variables are missing."""
         errors_found = False
 
-        for current in ENV_VAR_NAMES:
+        for current in required_env_vars:
             if not EnvVarUtils.is_valid_env_var(ENV_VARS[current], current):
                 errors_found = True
 

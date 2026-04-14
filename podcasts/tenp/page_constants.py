@@ -5,9 +5,9 @@ import os
 from reportlab.lib import colors
 
 from cache_paths import (
-    TENP_EPISODE_CACHE_FILENAME,
-    TENP_NEXT_MONTH_GAME_CACHE_FILENAME,
-    TENP_PROVIDER_KEY,
+    TEN_P_EPISODE_CACHE_FILENAME,
+    TEN_P_NEXT_MONTH_GAME_CACHE_FILENAME,
+    TEN_P_PROVIDER_KEY,
     ensure_podcast_cache_dirs,
     get_podcast_cache_file,
     get_podcast_cache_root,
@@ -21,15 +21,15 @@ from podcasts.common.page_constants import (
 
 FEED_URL = "https://www.tenpencearcade.com/feed.xml"
 
-CACHE_ROOT = get_podcast_cache_root(TENP_PROVIDER_KEY)
-IMAGE_CACHE_LOCATION = get_podcast_image_cache_dir(TENP_PROVIDER_KEY)
+CACHE_ROOT = get_podcast_cache_root(TEN_P_PROVIDER_KEY)
+IMAGE_CACHE_LOCATION = get_podcast_image_cache_dir(TEN_P_PROVIDER_KEY)
 EPISODE_CACHE_LOCATION = get_podcast_cache_file(
-    TENP_PROVIDER_KEY,
-    TENP_EPISODE_CACHE_FILENAME,
+    TEN_P_PROVIDER_KEY,
+    TEN_P_EPISODE_CACHE_FILENAME,
 )
 NEXT_MONTH_GAME_CACHE_LOCATION = get_podcast_cache_file(
-    TENP_PROVIDER_KEY,
-    TENP_NEXT_MONTH_GAME_CACHE_FILENAME,
+    TEN_P_PROVIDER_KEY,
+    TEN_P_NEXT_MONTH_GAME_CACHE_FILENAME,
 )
 
 PDF_NAME = "Ten Pence Arcade Episode Guide.pdf"
@@ -84,4 +84,4 @@ MIN_EPISODE_NUMBER = 200
 
 
 def ensure_cache_dirs() -> None:
-    ensure_podcast_cache_dirs(TENP_PROVIDER_KEY)
+    ensure_podcast_cache_dirs(TEN_P_PROVIDER_KEY)

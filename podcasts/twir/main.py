@@ -6,8 +6,14 @@ import logging
 
 from data_retriever import DataRetriever
 from cache_paths import EPISODE_CACHE_FILE, ensure_cache_dirs
-from env_var_utils import EnvVarUtils, PODBEAN_RSS_FEED, YOUTUBE_API_KEY, YOUTUBE_PLAYLIST_ID
-from podcasts.common.runtime import configure_logging, get_test_run_settings
+from env_var_utils import (
+    ENV_VAR_NAMES,
+    EnvVarUtils,
+    PODBEAN_RSS_FEED,
+    YOUTUBE_API_KEY,
+    YOUTUBE_PLAYLIST_ID,
+)
+from podcasts.common.runtime import configure_logging, get_test_run_settings, initialize_provider_runtime
 from podcasts.twir.episode_page_builder import build_episode_pages
 from podcasts.common.guide_main_base import BaseGuideMain
 from podcasts.twir.episode_cache import TWIREpisodeCache
@@ -102,7 +108,6 @@ class TWIRGuideMain(BaseGuideMain):
 
 def load_episodes() -> list[Episode]:
     """Load and normalize TWIR episode data from YouTube and Podbean."""
-    EnvVarUtils.init()
     ensure_cache_dirs()
 
     cached_episodes = TWIREpisodeCache.load(EPISODE_CACHE_FILE)
@@ -151,6 +156,7 @@ def load_episodes() -> list[Episode]:
 
 def main() -> None:
     """Run the TWIR guide generation flow."""
+    initialize_provider_runtime(required_env_vars=ENV_VAR_NAMES)
     writer = PDFWriter()
     qow_processor = QuestionOfTheWeekProcessor()
     qow_processor.process_qow()

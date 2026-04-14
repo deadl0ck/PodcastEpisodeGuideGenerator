@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
+from typing import Iterable
 
 from env_var_utils import EnvVarUtils
 
@@ -55,3 +56,10 @@ def get_test_run_settings() -> tuple[bool, int]:
     test_run = os.getenv("GUIDE_TEST_RUN", "false").lower() in {"1", "true", "yes"}
     test_run_count = int(os.getenv("GUIDE_TEST_COUNT", "5"))
     return test_run, test_run_count
+
+
+def initialize_provider_runtime(required_env_vars: Iterable[str] | None = None) -> None:
+    """Load and log environment variables, optionally validating required ones."""
+    EnvVarUtils.init_and_log()
+    if required_env_vars is not None:
+        EnvVarUtils.check_required_env_vars(list(required_env_vars))

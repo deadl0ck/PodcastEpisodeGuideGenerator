@@ -10,7 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from cache_paths import RA_PROVIDER_KEY, TENP_PROVIDER_KEY, TWIR_PROVIDER_KEY, ZTTP_PROVIDER_KEY
+from cache_paths import RA_PROVIDER_KEY, RGDS_PROVIDER_KEY, TEN_P_PROVIDER_KEY, TWIR_PROVIDER_KEY, ZTTP_PROVIDER_KEY
 from constants import get_provider_constants
 
 
@@ -19,8 +19,9 @@ CLI_ALL = "all"
 PODCAST_TWIR = TWIR_PROVIDER_KEY.lower()
 PODCAST_ZTTP = ZTTP_PROVIDER_KEY.lower()
 PODCAST_RA = RA_PROVIDER_KEY.lower()
-PODCAST_TENP = TENP_PROVIDER_KEY.lower()
-SUPPORTED_PODCASTS = (PODCAST_TWIR, PODCAST_ZTTP, PODCAST_RA, PODCAST_TENP)
+PODCAST_TENP = TEN_P_PROVIDER_KEY.lower()
+PODCAST_RGDS = RGDS_PROVIDER_KEY.lower()
+SUPPORTED_PODCASTS = (PODCAST_TWIR, PODCAST_ZTTP, PODCAST_RA, PODCAST_TENP, PODCAST_RGDS)
 
 
 def _build_command(podcast_key: str) -> list[str]:
@@ -33,6 +34,8 @@ def _build_command(podcast_key: str) -> list[str]:
         return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / PODCAST_RA / "main.py")]
     if podcast_key == PODCAST_TENP:
         return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / "tenp" / "main.py")]
+    if podcast_key == PODCAST_RGDS:
+        return [sys.executable, str(WORKSPACE_ROOT / "podcasts" / PODCAST_RGDS / "main.py")]
     raise ValueError(f"Unsupported podcast key: {podcast_key}")
 
 

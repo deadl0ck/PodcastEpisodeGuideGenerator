@@ -9,7 +9,7 @@ import logging
 import feedparser
 
 from podcasts.common.guide_main_base import BaseGuideMain
-from podcasts.common.runtime import configure_logging, get_test_run_settings
+from podcasts.common.runtime import configure_logging, get_test_run_settings, initialize_provider_runtime
 from podcasts.zttp.covers import Covers
 from podcasts.zttp.crapverts import Crapverts
 from podcasts.zttp.episode import Episode
@@ -189,6 +189,7 @@ def load_episodes() -> list[Episode]:
 
 def main() -> None:
     """Run the ZTTP guide generation flow."""
+    initialize_provider_runtime()
     writer = PDFWriter()
     app = ZTTPGuideMain(writer)
     app.create_and_save_magazine(COVER_IMAGE, load_episodes())
