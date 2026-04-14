@@ -174,37 +174,45 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-Template contents:
+Template contents (grouped by podcast/provider):
 
-Required variables:
+### Global Variables (All Podcasts)
 
-| Variable               | Description                                                   |
-|------------------------|---------------------------------------------------------------|
-| `YOUTUBE_API_KEY`      | YouTube Data API key (TWIR)                                   |
-| `YOUTUBE_PLAYLIST_ID`  | ID of the TWIR YouTube playlist                               |
-| `PODBEAN_RSS_FEED`     | Full URL of the Podbean RSS feed for TWIR                    |
-| `REDDIT_CLIENT_ID`     | Reddit app client ID (TWIR QoW) — from reddit.com/prefs/apps |
-| `REDDIT_CLIENT_SECRET` | Reddit app client secret (TWIR QoW)                           |
-| `REDDIT_USERNAME`      | Reddit account username (TWIR QoW)                            |
-| `REDDIT_PASSWORD`      | Reddit account password (TWIR QoW)                            |
-| `REDDIT_USER_AGENT`    | User-agent string identifying the script to Reddit            |
+| Variable    | Required | Description |
+|-------------|----------|-------------|
+| `LOG_LEVEL` | No       | Logging verbosity. Valid values are Python logging levels such as `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Defaults to `INFO` if omitted or invalid. |
 
-Optional variables:
+### TWIR Variables (Required for `--podcasts twir` and `--podcasts all`)
 
-| Variable    | Description |
-|-------------|-------------|
-| `LOG_LEVEL` | Logging verbosity. Valid values are Python logging levels such as `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. Defaults to `INFO` if omitted or invalid. |
-| `TEN_P_GEMINI_API_KEY` | Optional Gemini API key used for Ten Pence next-month-game extraction. If omitted, the provider falls back to cache/overrides and `No Game`. |
-| `RGDS_SHOW_ID` | Optional Spotify show ID for RGDS. Defaults to the current RGDS show if omitted. |
-| `RGDS_REFRESH_TOKEN` | Optional Spotify refresh token for non-interactive RGDS runs. If omitted, first RGDS run uses browser OAuth bootstrap and caches the refresh token under `.cache/RGDS/auth.json`. |
+| Variable               | Required | Description |
+|------------------------|----------|-------------|
+| `YOUTUBE_API_KEY`      | Yes      | YouTube Data API key for TWIR episode retrieval. |
+| `YOUTUBE_PLAYLIST_ID`  | Yes      | ID of the TWIR YouTube playlist. |
+| `PODBEAN_RSS_FEED`     | Yes      | Full URL of the Podbean RSS feed for TWIR. |
+| `REDDIT_CLIENT_ID`     | Yes      | Reddit app client ID (TWIR QoW), from reddit.com/prefs/apps. |
+| `REDDIT_CLIENT_SECRET` | Yes      | Reddit app client secret (TWIR QoW). |
+| `REDDIT_USERNAME`      | Yes      | Reddit account username (TWIR QoW). |
+| `REDDIT_PASSWORD`      | Yes      | Reddit account password (TWIR QoW). |
+| `REDDIT_USER_AGENT`    | Yes      | User-agent string identifying the script to Reddit. |
 
-RGDS-required variables (required when running `--podcasts rgds`):
+### 10P Variables (Optional for `--podcasts 10p` and `--podcasts all`)
 
-| Variable              | Description |
-|-----------------------|-------------|
-| `RGDS_CLIENT_ID`      | Spotify app client ID |
-| `RGDS_CLIENT_SECRET`  | Spotify app client secret |
-| `RGDS_REDIRECT_URI`   | Spotify app redirect URI (must match your Spotify app settings) |
+| Variable               | Required | Description |
+|------------------------|----------|-------------|
+| `TEN_P_GEMINI_API_KEY` | No       | Optional Gemini API key used for Ten Pence next-month-game extraction. If omitted, the provider falls back to cache/overrides and `No Game`. |
+
+### RGDS Variables (Required for `--podcasts rgds` and `--podcasts all`)
+
+| Variable              | Required | Description |
+|-----------------------|----------|-------------|
+| `RGDS_CLIENT_ID`      | Yes      | Spotify app client ID. |
+| `RGDS_CLIENT_SECRET`  | Yes      | Spotify app client secret. |
+| `RGDS_REDIRECT_URI`   | Yes      | Spotify app redirect URI (must match your Spotify app settings). |
+| `RGDS_SHOW_ID`        | No       | Optional Spotify show ID for RGDS. Defaults to the current RGDS show if omitted. |
+| `RGDS_REFRESH_TOKEN`  | No       | Optional Spotify refresh token for non-interactive RGDS runs. If omitted, first RGDS run uses browser OAuth bootstrap and caches the refresh token under `.cache/RGDS/auth.json`. |
+
+### RA and ZTTP Variables
+- No dedicated environment variables are required by these providers in the current implementation.
 
 Compatibility note:
 - `YOUTUBE_API_KEY` is the canonical TWIR key name.
