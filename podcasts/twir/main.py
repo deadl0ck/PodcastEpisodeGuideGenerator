@@ -112,21 +112,28 @@ def load_episodes() -> list[Episode]:
 
     cached_episodes = TWIREpisodeCache.load(EPISODE_CACHE_FILE)
     if cached_episodes:
-        logger.info("TWIR episode cache HIT: %s entries", len(cached_episodes))
-        cached_episodes.sort(key=lambda x: x.episode_number, reverse=True)
-        if TEST_RUN:
-            del cached_episodes[TEST_RUN_COUNT:]
-        return cached_episodes
+        logger.info("TWIR episode cache available: %s entries", len(cached_episodes))
+    else:
+        logger.info("TWIR episode cache empty")
 
-    logger.info("TWIR episode cache MISS: fetching from remote sources")
+    logger.info("Refreshing TWIR episodes from remote sources")
 
-    youtube_items = DataRetriever.get_youtube_playlist_items(
-        EnvVarUtils.get_env_var(YOUTUBE_API_KEY),
-        EnvVarUtils.get_env_var(YOUTUBE_PLAYLIST_ID),
-    )
-    podcast_items = DataRetriever.get_podcast_mp3_links_and_air_dates(
-        EnvVarUtils.get_env_var(PODBEAN_RSS_FEED)
-    )
+    try:
+        youtube_items = DataRetriever.get_youtube_playlist_items(
+            EnvVarUtils.get_env_var(YOUTUBE_API_KEY),
+            EnvVarUtils.get_env_var(YOUTUBE_PLAYLIST_ID),
+        )
+        podcast_items = DataRetriever.get_podcast_mp3_links_and_air_dates(
+            EnvVarUtils.get_env_var(PODBEAN_RSS_FEED)
+        )
+    except Exception as exc:  # pragma: no cover - defensive network fallback
+        if cached_episodes:
+            logger.warning("TWIR refresh failed, using cached episodes: %s", exc)
+            cached_episodes.sort(key=lambda x: x.episode_number, reverse=True)
+            if TEST_RUN:
+                del cached_episodes[TEST_RUN_COUNT:]
+            return cached_episodes
+        raise
 
     if TEST_RUN:
         logger.info('**** This is a test run - will only process %s episodes ****', TEST_RUN_COUNT)
@@ -134,6 +141,21 @@ def load_episodes() -> list[Episode]:
     all_episodes = []
     for key in youtube_items.keys():
         episode_number = TWIRUtils.extract_episode_number(youtube_items[key].title)[0]
+
+        if episode_number < 0:
+            logger.warning(
+                'Skipping YouTube item with unrecognized TWIR episode pattern: "%s"',
+                youtube_items[key].title,
+            )
+            continue
+
+        if episode_number not in podcast_items:
+            logger.warning(
+                "Skipping episode %s - no matching Podbean RSS item found yet",
+                episode_number,
+            )
+            continue
+
         all_episodes.append(Episode(
             f'{TWIRUtils.tidy_up_title(youtube_items[key].title)}',
             TWIRUtils.extract_description(youtube_items[key].description),
@@ -144,6 +166,13 @@ def load_episodes() -> list[Episode]:
             podcast_items[episode_number][0],
             podcast_items[episode_number][2],
         ))
+
+    if not all_episodes and cached_episodes:
+        logger.warning("TWIR refresh returned 0 episodes; keeping cached episode set")
+        cached_episodes.sort(key=lambda x: x.episode_number, reverse=True)
+        if TEST_RUN:
+            del cached_episodes[TEST_RUN_COUNT:]
+        return cached_episodes
 
     all_episodes.sort(key=lambda x: x.episode_number, reverse=True)
     TWIREpisodeCache.save(EPISODE_CACHE_FILE, all_episodes)
