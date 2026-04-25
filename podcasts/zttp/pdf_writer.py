@@ -15,7 +15,6 @@ from podcasts.zttp.page_constants import (
     GAME_LIST_BOOKMARK,
     JUMP_TO_TOC_FONT,
     JUMP_TO_TOC_TEXT,
-    SUB_HEADINGS_LETTERS_PER_LINE,
     TOC_BOOKMARK,
     TOC_FONT_SIZE,
 )
@@ -60,10 +59,6 @@ class PDFWriter(BasePDFWriter):
         return self.insert_image_from_url_with_link(
             image_url, required_width, image_x, image_y, link_url, show_boundary
         )
-
-    @staticmethod
-    def split_into_multiline(text: str) -> list[str]:
-        return BasePDFWriter.split_into_multiline(text, SUB_HEADINGS_LETTERS_PER_LINE)
 
     def write_games_list(
         self,

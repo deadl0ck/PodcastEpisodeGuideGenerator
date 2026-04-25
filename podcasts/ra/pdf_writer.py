@@ -24,7 +24,6 @@ from podcasts.ra.page_constants import (
     JUMP_TO_TOC_TEXT,
     LISTEN_IMAGE,
     REMOVED_COVER_SUFFIX,
-    SUB_HEADINGS_LETTERS_PER_LINE,
     TEXT_TO_REMOVE,
     TOC_BOOKMARK,
 )
@@ -43,11 +42,6 @@ class PDFWriter(BasePDFWriter):
             pdf_path=FULL_PDF_PATH,
             image_cache_dir=IMAGE_CACHE_LOCATION,
         )
-
-    @staticmethod
-    def split_into_multiline(text: str) -> list[str]:
-        """Wrap text to the RA-specific characters-per-line limit."""
-        return BasePDFWriter.split_into_multiline(text, SUB_HEADINGS_LETTERS_PER_LINE)
 
     @staticmethod
     def removal_text_present(text: str, cover_url: str) -> bool:
