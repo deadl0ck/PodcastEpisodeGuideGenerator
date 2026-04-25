@@ -26,7 +26,7 @@ class TenPEpisodeRenderer(BaseEpisodeRenderer):
 
     def render_episode_pages(self, writer: Any, episodes: list[Any]) -> None:
         for episode in episodes:
-            logger.info("[ ---------- Building Episode ---------- ]")
+            logger.info(self._EPISODE_SEPARATOR)
             logger.info("[PAGE] %s", episode.title)
             writer.create_bookmark(str(episode.episode_number))
             episode.print_summary()

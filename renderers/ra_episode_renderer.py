@@ -69,7 +69,7 @@ class RAEpisodeRenderer(BaseEpisodeRenderer):
     def render_episode_pages(self, writer: Any, episodes: list[Any]) -> None:
         """Render all RA episode pages, skipping any that exhaust retry attempts."""
         for episode in episodes:
-            logger.info("[ ---------- Building Episode ---------- ]")
+            logger.info(self._EPISODE_SEPARATOR)
             episode.print_out()
             try:
                 self._run_with_retry(
