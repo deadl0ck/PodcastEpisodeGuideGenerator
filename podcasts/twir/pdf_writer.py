@@ -31,12 +31,8 @@ class PDFWriter(BasePDFWriter):
             image_cache_dir=IMAGE_CACHE_DIR,
         )
 
-    @staticmethod
-    def split_into_multiline(text: str, letters_per_line: int = DEFAULT_LETTERS_PER_LINE) -> list[str]:
-        return BasePDFWriter.split_into_multiline(text, letters_per_line)
-
     def write_qow(self, text: str, x: float, y: float, url: str) -> None:
-        multiline_text = PDFWriter.split_into_multiline(text)
+        multiline_text = BasePDFWriter.split_into_multiline(text, DEFAULT_LETTERS_PER_LINE)
         self.write_text_to_page(
             'Community Question of the Week:',
             QOW_FONT,
@@ -95,8 +91,9 @@ class PDFWriter(BasePDFWriter):
         for qow in qow_dict.keys():
             qow_list.append((
                 qow_dict[qow].episode_number,
-                PDFWriter.split_into_multiline(
-                    f'[Episode {qow_dict[qow].episode_number}] {qow_dict[qow].question}'
+                BasePDFWriter.split_into_multiline(
+                    f'[Episode {qow_dict[qow].episode_number}] {qow_dict[qow].question}',
+                    DEFAULT_LETTERS_PER_LINE,
                 ),
             ))
 
