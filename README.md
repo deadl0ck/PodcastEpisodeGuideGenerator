@@ -64,7 +64,7 @@ pip install -r requirements.txt
 # 4) Create .env from the example in this README
 
 # 5) Run the app
-python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
+python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
 ### Windows (PowerShell)
@@ -83,7 +83,7 @@ pip install -r requirements.txt
 # 4) Create .env from the example in this README
 
 # 5) Run the app
-python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
+python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
 Output files are written to your Desktop (podcast dependent):
@@ -276,27 +276,27 @@ To create a Reddit app:
 ### macOS / Linux
 
 ```bash
-python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
+python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
 If your venv is not active, run with the venv Python directly:
 
 ```bash
-./.venv/bin/python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
-./.venv310/bin/python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
+./.venv/bin/python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
+./.venv310/bin/python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
+python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
 If your venv is not active:
 
 ```powershell
-.\.venv\Scripts\python.exe run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
-.\.venv310\Scripts\python.exe run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
+.\.venv\Scripts\python.exe run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
+.\.venv310\Scripts\python.exe run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
 Output files are written to your Desktop:
@@ -341,7 +341,7 @@ CLI selection tokens are lower-case:
 Internally, provider IDs are centralized in `cache_paths.py` as upper-case keys (`TWIR`, `ZTTP`, `RA`, `10P`, `RGDS`) and the runner derives CLI tokens from those constants.
 
 ```bash
-python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
+python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 python run_guides.py --podcasts zttp
 python run_guides.py --podcasts ra
 python run_guides.py --podcasts 10p
@@ -423,8 +423,8 @@ The app uses Python's standard `logging` module throughout (instead of `print`).
 Examples:
 
 ```bash
-LOG_LEVEL=INFO python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
-LOG_LEVEL=DEBUG python run_guides.py --podcasts [twir | zttp | ra | 10p | rgds | all]
+LOG_LEVEL=INFO python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
+LOG_LEVEL=DEBUG python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
 ---
