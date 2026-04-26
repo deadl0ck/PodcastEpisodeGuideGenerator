@@ -114,17 +114,6 @@ class ZTTPGuideMain(BaseGuideMain):
         )
 
 
-def format_duration(duration_str: str) -> str:
-    """Convert a raw duration string in seconds to HH:MM format."""
-    if not duration_str:
-        return "00:00"
-
-    seconds = int(duration_str.strip("'\""))
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    return f"{hours:02d}:{minutes:02d}"
-
-
 def load_episodes() -> list[Episode]:
     """Load and cache ZTTP feed episodes enriched with parsed game metadata."""
     ensure_cache_dirs()
@@ -160,7 +149,7 @@ def load_episodes() -> list[Episode]:
                 ep.description,
                 ZzapUtils.extract_date_time(ep.published),
                 ep.summary,
-                format_duration(ep.itunes_duration),
+                ZzapUtils.format_duration(ep.itunes_duration),
                 ep.links[1].href,
                 html,
                 ZzapUtils.get_image_url(ep.link),
