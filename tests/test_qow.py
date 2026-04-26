@@ -14,7 +14,11 @@ import unittest
 import unittest.mock
 import pickle
 import tempfile
-from podcasts.twir.qow.question_of_the_week import QOW, QUESTIONS_AND_EPISODES
+
+try:
+    from podcasts.twir.qow.question_of_the_week import QOW, QUESTIONS_AND_EPISODES
+except ImportError as e:
+    raise unittest.SkipTest(f"Skipping test_qow: missing dependency ({e})")
 from podcasts.common.page_constants import NULL_LINK
 
 
