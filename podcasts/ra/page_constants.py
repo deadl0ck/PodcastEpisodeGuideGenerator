@@ -9,6 +9,7 @@ from reportlab.lib import colors
 from cache_paths import (
     RA_EPISODE_CACHE_FILENAME,
     RA_PROVIDER_KEY,
+    ensure_podcast_cache_dirs,
     get_podcast_cache_file,
     get_podcast_cache_root,
     get_podcast_image_cache_dir,
@@ -55,6 +56,4 @@ EPISODE_WEB_LINK_LABEL_Y = 29.2 - 24
 
 
 def ensure_cache_dirs() -> None:
-    """Create RA cache directories if they do not already exist."""
-    os.makedirs(CACHE_ROOT, exist_ok=True)
-    os.makedirs(IMAGE_CACHE_LOCATION, exist_ok=True)
+    ensure_podcast_cache_dirs(RA_PROVIDER_KEY)

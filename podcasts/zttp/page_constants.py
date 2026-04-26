@@ -10,6 +10,7 @@ from cache_paths import (
     ZTTP_EPISODE_CACHE_FILENAME,
     ZTTP_PROVIDER_KEY,
     ZTTP_ZZAP_CACHE_FILENAME,
+    ensure_podcast_cache_dirs,
     get_podcast_cache_file,
     get_podcast_cache_root,
     get_podcast_image_cache_dir,
@@ -67,7 +68,5 @@ SUB_HEADING_FONT_COLOUR = colors.black
 
 
 def ensure_cache_dirs() -> None:
-    """Create ZTTP cache directories if they don't exist."""
-    os.makedirs(CACHE_ROOT, exist_ok=True)
-    os.makedirs(IMAGE_CACHE_LOCATION, exist_ok=True)
+    ensure_podcast_cache_dirs(ZTTP_PROVIDER_KEY)
 
