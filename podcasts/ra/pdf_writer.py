@@ -12,8 +12,6 @@ from podcasts.common.page_constants import (
     DEFAULT_FONT_BOLD,
     LISTEN_IMAGE_WIDTH,
     LISTEN_IMAGE_Y,
-    SUBTLE_TEXT_COLOUR,
-    TOC_FONT_SIZE,
 )
 from podcasts.ra.page_constants import (
     COVER_FONT_COLOUR,
@@ -21,7 +19,6 @@ from podcasts.ra.page_constants import (
     COVER_LINK,
     FULL_PDF_PATH,
     IMAGE_CACHE_LOCATION,
-    JUMP_TO_TOC_TEXT,
     LISTEN_IMAGE,
     REMOVED_COVER_SUFFIX,
     TEXT_TO_REMOVE,
@@ -77,15 +74,3 @@ class PDFWriter(BasePDFWriter):
         if not audio_url:
             return
         self.write_listen_image(audio_url, LISTEN_IMAGE, LISTEN_IMAGE_WIDTH, LISTEN_IMAGE_Y)
-
-    def write_jump_to_toc_link(self) -> None:
-        """Write a small jump-to-TOC hyperlink at the bottom of the current page."""
-        self.write_text_with_link(
-            JUMP_TO_TOC_TEXT,
-            DEFAULT_FONT_BOLD,
-            TOC_FONT_SIZE,
-            SUBTLE_TEXT_COLOUR,
-            18,
-            0.3,
-            TOC_BOOKMARK,
-        )
