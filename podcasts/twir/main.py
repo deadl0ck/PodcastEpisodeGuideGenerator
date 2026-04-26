@@ -14,7 +14,7 @@ from env_var_utils import (
     YOUTUBE_PLAYLIST_ID,
 )
 from podcasts.common.runtime import configure_logging, get_test_run_settings, initialize_provider_runtime
-from podcasts.twir.episode_page_builder import build_episode_pages
+from renderers.twir_episode_renderer import TWIREpisodeRenderer
 from podcasts.common.guide_main_base import BaseGuideMain
 from podcasts.twir.episode_cache import TWIREpisodeCache
 from podcasts.twir.episode import Episode
@@ -93,7 +93,8 @@ class TWIRGuideMain(BaseGuideMain):
         )
 
     def build_pages(self, episodes: list[Episode], context: dict[str, dict[int, object]]) -> None:
-        build_episode_pages(self.writer, episodes, context["qow"], RETRY_NUMBER)
+        renderer = TWIREpisodeRenderer(qow_dict=context["qow"], retry_number=RETRY_NUMBER)
+        renderer.render_episode_pages(self.writer, episodes)
 
     def write_feature_list(self, episodes: list[Episode], context: dict[str, dict[int, object]]) -> None:
         self.writer.write_qow_list(
