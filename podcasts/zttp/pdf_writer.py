@@ -50,16 +50,6 @@ class PDFWriter(BasePDFWriter):
         logger.info("Image cache MISS (ZTTP filename): %s", file_name)
         return super()._get_or_download_image_bytes(image_url)
 
-    # Backward-compatible aliases during migration.
-    def insert_image_from_ulr_centred(self, url: str, required_height: int, link_url: str | None = None):
-        return self.insert_image_from_url_centred(url, required_height, link_url)
-
-    def insert_image_from_ulr_with_link(self, image_url: str, required_width: int, image_x: int, image_y: int,
-                                        link_url: str | None = None, show_boundary: bool = True):
-        return self.insert_image_from_url_with_link(
-            image_url, required_width, image_x, image_y, link_url, show_boundary
-        )
-
     def write_games_list(
         self,
         episodes: list,
