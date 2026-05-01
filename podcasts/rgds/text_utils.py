@@ -30,6 +30,15 @@ class RGDSTextUtils:
         return cleaned or "Untitled Episode"
 
     @staticmethod
+    def format_duration_ms(duration_ms: int | None) -> str:
+        if duration_ms is None:
+            return "00:00:00"
+        total_seconds = int(duration_ms) // 1000
+        hours, remainder = divmod(total_seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f"{hours:02}:{minutes:02}:{seconds:02}"
+
+    @staticmethod
     def trim_description(description: str | None) -> str:
         if description is None:
             return ""

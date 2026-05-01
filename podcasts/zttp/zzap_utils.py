@@ -87,6 +87,16 @@ class ZzapUtils(BasePodcastUtils):
         return COVER_IMAGE
 
     @staticmethod
+    def format_duration(duration_str: str) -> str:
+        """Convert a raw duration string in seconds to HH:MM format."""
+        if not duration_str:
+            return "00:00"
+        seconds = int(duration_str.strip("'\""))
+        hours = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        return f"{hours:02d}:{minutes:02d}"
+
+    @staticmethod
     def extract_game_award_text(text: str) -> str:
         """Return the matching award/games heading text from HTML content."""
         for value in GAME_AWARD_TEXT:

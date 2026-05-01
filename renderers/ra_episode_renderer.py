@@ -63,13 +63,13 @@ class RAEpisodeRenderer(BaseEpisodeRenderer):
         )
         writer.write_listen_badge(episode.audio_url)
         writer.write_sub_heading_to_page(episode.description, DESCRIPTION_Y * cm)
-        writer.write_jump_to_toc_link()
+        writer.insert_jump_to_toc_link()
         writer.new_page()
 
     def render_episode_pages(self, writer: Any, episodes: list[Any]) -> None:
         """Render all RA episode pages, skipping any that exhaust retry attempts."""
         for episode in episodes:
-            logger.info("[ ---------- Building Episode ---------- ]")
+            logger.info(self._EPISODE_SEPARATOR)
             episode.print_out()
             try:
                 self._run_with_retry(

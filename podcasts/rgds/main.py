@@ -91,15 +91,6 @@ class RGDSGuideMain(BaseGuideMain):
         return
 
 
-def _format_duration_ms(duration_ms: int | None) -> str:
-    if duration_ms is None:
-        return "00:00:00"
-    total_seconds = int(duration_ms) // 1000
-    hours, remainder = divmod(total_seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"{hours:02}:{minutes:02}:{seconds:02}"
-
-
 def _build_episode(item: dict) -> Episode:
     images = item.get("images") or []
     image_url = images[0]["url"] if images else ""
@@ -115,7 +106,7 @@ def _build_episode(item: dict) -> Episode:
         description=RGDSTextUtils.trim_description(item.get("description", "")),
         published=published,
         summary=item.get("description", ""),
-        duration=_format_duration_ms(item.get("duration_ms")),
+        duration=RGDSTextUtils.format_duration_ms(item.get("duration_ms")),
         mp3=page_url,
         html_content="",
         episode_image=image_url,

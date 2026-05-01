@@ -112,7 +112,7 @@ class TWIREpisodeRenderer(BaseEpisodeRenderer):
             csv_writer.writerow(['Episode #', 'Published', 'Title', 'CQOtW', 'CQOtW URL'])
 
             for episode in episodes:
-                logger.info('[ ---------- Building Episode ---------- ]')
+                logger.info(self._EPISODE_SEPARATOR)
                 episode.print_out()
 
                 self._run_with_retry(

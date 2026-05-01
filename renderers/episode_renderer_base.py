@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 class BaseEpisodeRenderer(ABC):
     """Common retry and rendering contract for provider-specific episode renderers."""
 
+    _EPISODE_SEPARATOR = "[ ---------- Building Episode ---------- ]"
+
     def __init__(self, retry_number: int):
         self.retry_number = retry_number
 

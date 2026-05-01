@@ -72,8 +72,10 @@ def main() -> int:
         "--podcasts",
         default=PODCAST_TWIR,
         help=(
-            f"Comma-separated list: {','.join(SUPPORTED_PODCASTS)} "
-            f"or {CLI_ALL} (default: {PODCAST_TWIR})"
+            f"One or more podcast keys, comma-separated. "
+            f"Supported: {', '.join(SUPPORTED_PODCASTS)}, {CLI_ALL}. "
+            f"Examples: twir  |  twir,zttp  |  ra,10p,rgds  |  all. "
+            f"Default: {PODCAST_TWIR}."
         ),
     )
     parser.add_argument(
