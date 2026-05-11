@@ -36,6 +36,10 @@ class ZTTPEpisodeRenderer(BaseEpisodeRenderer):
 
     @staticmethod
     def _extract_month_year(episode_title: str) -> str:
+        cf_match = re.search(r'Commodore Force \d+', episode_title)
+        if cf_match:
+            return cf_match.group(0)
+
         my = re.findall("[J,F,M,A,S,O,N,D].+ \\d{4}", episode_title)
         if not my:
             return ""

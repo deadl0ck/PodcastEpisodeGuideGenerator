@@ -9,7 +9,7 @@ from podcasts.zttp.html_utils import HTMLUtils
 from podcasts.zttp.page_constants import ZZAP_CACHE_LOCATION
 
 BASE_COVERS_URL = "https://www.zzap64.co.uk/"
-END_COVER = 90
+END_COVER = 91
 logger = logging.getLogger(__name__)
 
 

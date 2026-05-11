@@ -26,6 +26,7 @@ Each run produces:
 - [Project Structure](#project-structure)
 - [Logging](#logging)
 - [Image Cache](#image-cache)
+- [ZTTP Cover Images](#zttp-cover-images)
 - [Ten Pence AI Extraction](#ten-pence-ai-extraction)
 - [Developer Notes](#developer-notes)
 - [Unit Tests](#unit-tests)
@@ -493,6 +494,20 @@ The two static images hosted on `i.ibb.co` (which may be blocked in some environ
 |--------------------------------------|-----------------------------------------------------|
 | `i-ibb-co-ccL0XZPJ-TWIR-Reddit-logo.jpg` | `https://i.ibb.co/ccL0XZPJ/TWIR-Reddit-logo.jpg` |
 | `i-ibb-co-NWmMHcH-Listen-Now.jpg`        | `https://i.ibb.co/NWmMHcH/Listen-Now.jpg`        |
+
+---
+
+## ZTTP Cover Images
+
+The ZTTP guide inserts a full-page magazine cover before the first episode page that covers each issue.
+
+### Zzap!64 covers (issues 1–91, May 1985 – December 1992)
+
+Cover images are scraped from [zzap64.co.uk](https://www.zzap64.co.uk/) and cached in `.cache/ZTTP/zzap_cache.pkl`. The scraper runs automatically on the first run and on any run where the cache is absent or invalid. Cover pages are keyed by `Month YYYY` extracted from the episode title.
+
+### Commodore Force covers (issues 1–16, January 1993 – March 1994)
+
+Cover images are hardcoded in `podcasts/zttp/commodore_force_covers.py` with full-size images sourced from [retromags.com](https://www.retromags.com/gallery/category/219-commodore-force/). Because Commodore Force was a short-lived magazine with a fixed, complete run, no scraping or caching is required. Cover pages are keyed by `Commodore Force N` (issue number) extracted from the episode title.
 
 ---
 
