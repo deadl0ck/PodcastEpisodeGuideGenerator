@@ -10,7 +10,6 @@ import feedparser
 
 from podcasts.common.guide_main_base import BaseGuideMain
 from podcasts.common.runtime import configure_logging, get_test_run_settings, initialize_provider_runtime
-from podcasts.zttp.commodore_force_covers import COMMODORE_FORCE_COVERS
 from podcasts.zttp.covers import Covers
 from podcasts.zttp.crapverts import Crapverts
 from podcasts.zttp.episode import Episode
@@ -60,7 +59,6 @@ class ZTTPGuideMain(BaseGuideMain):
         logger.info('Writing games list....')
         crapverts = Crapverts.get_all_crapverts()
         covers = Covers().get_covers()
-        covers.update(COMMODORE_FORCE_COVERS)
         return {
             "crapverts": crapverts,
             "covers": covers,

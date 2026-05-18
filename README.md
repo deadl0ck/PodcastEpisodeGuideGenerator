@@ -505,10 +505,6 @@ The ZTTP guide inserts a full-page magazine cover before the first episode page 
 
 Cover images are scraped from [zzap64.co.uk](https://www.zzap64.co.uk/) and cached in `.cache/ZTTP/zzap_cache.pkl`. The scraper runs automatically on the first run and on any run where the cache is absent or invalid. Cover pages are keyed by `Month YYYY` extracted from the episode title.
 
-### Commodore Force covers (issues 1–16, January 1993 – March 1994)
-
-Cover images are hardcoded in `podcasts/zttp/commodore_force_covers.py` with full-size images sourced from [retromags.com](https://www.retromags.com/gallery/category/219-commodore-force/). Because Commodore Force was a short-lived magazine with a fixed, complete run, no scraping or caching is required. Cover pages are keyed by `Commodore Force N` (issue number) extracted from the episode title.
-
 ---
 
 ## Ten Pence AI Extraction
