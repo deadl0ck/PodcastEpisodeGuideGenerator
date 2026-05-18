@@ -87,7 +87,7 @@ pip install -r requirements.txt
 python run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
-Output files are written to your Desktop (podcast dependent):
+Output files are written to `/mnt/ssd/podcast-episodes` (podcast dependent):
 - `TWiR Episode Guide.pdf`
 - `TWiR_Data.csv`
 - `ZTTP Episode Guide.pdf`
@@ -300,13 +300,13 @@ If your venv is not active:
 .\.venv310\Scripts\python.exe run_guides.py --podcasts twir,zttp,ra,10p,rgds  # any combination, or 'all'
 ```
 
-Output files are written to your Desktop:
-- `~/Desktop/TWiR Episode Guide.pdf` — the full episode guide PDF
-- `~/Desktop/TWiR_Data.csv` — CSV of episode data including questions
-- `~/Desktop/ZTTP Episode Guide.pdf` — the ZTTP episode guide PDF
-- `~/Desktop/RA Episode Guide.pdf` — the Retro Asylum episode guide PDF
-- `~/Desktop/Ten Pence Arcade Episode Guide.pdf` — the Ten Pence Arcade episode guide PDF
-- `~/Desktop/RGDS Episode Guide.pdf` — the RGDS episode guide PDF
+Output files are written to `/mnt/ssd/podcast-episodes`:
+- `/mnt/ssd/podcast-episodes/TWiR Episode Guide.pdf` — the full episode guide PDF
+- `/mnt/ssd/podcast-episodes/TWiR_Data.csv` — CSV of episode data including questions
+- `/mnt/ssd/podcast-episodes/ZTTP Episode Guide.pdf` — the ZTTP episode guide PDF
+- `/mnt/ssd/podcast-episodes/RA Episode Guide.pdf` — the Retro Asylum episode guide PDF
+- `/mnt/ssd/podcast-episodes/Ten Pence Arcade Episode Guide.pdf` — the Ten Pence Arcade episode guide PDF
+- `/mnt/ssd/podcast-episodes/RGDS Episode Guide.pdf` — the RGDS episode guide PDF
 
 ## Utility Scripts
 
