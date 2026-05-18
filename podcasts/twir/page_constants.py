@@ -18,7 +18,7 @@ from podcasts.common.page_constants import (
 # TWIR-specific PDF file name and path
 PDF_NAME = "TWiR Episode Guide.pdf"
 FULL_PDF_PATH = f'{PDF_LOCATION}{os.sep}{PDF_NAME}'
-CSV_LOCATION = f"{os.path.expanduser('~')}{os.sep}Desktop{os.sep}TWiR_Data.csv"
+CSV_LOCATION = f"{PDF_LOCATION}{os.sep}TWiR_Data.csv"
 
 # TWIR branding
 COVER_IMAGE = "https://i.ibb.co/ccL0XZPJ/TWIR-Reddit-logo.jpg"

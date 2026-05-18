@@ -22,8 +22,7 @@ HEADING_FONT_COLOUR = colors.blue
 SUBTLE_TEXT_COLOUR = colors.slategrey
 NULL_LINK = "#null"
 
-# Desktop PDF output paths (podcasts override PDF_NAME and FULL_PDF_PATH)
-PDF_LOCATION = f"{os.path.expanduser('~')}{os.sep}Desktop"
+PDF_LOCATION = "/mnt/ssd/podcast-episodes"
 
 # Standard font sizes for major sections
 TOC_FONT_SIZE = 10
