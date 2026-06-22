@@ -69,11 +69,13 @@ class ZzapUtils(BasePodcastUtils):
     @staticmethod
     def get_image_url(url: str) -> str:
         """Return the primary episode image URL from a ZTTP episode page."""
-        response = requests.get(url, timeout=30)
-        if response.status_code == 200:
+        try:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
             html_content = response.text
-        else:
-            return "!!! NO IMAGE FOUND !!!"
+        except requests.RequestException:
+            logger.warning("Could not fetch episode page for image URL: %s", url)
+            return COVER_IMAGE
         soup = BeautifulSoup(html_content, "lxml")
         images = soup.find_all("img")
         if len(images) > 0:

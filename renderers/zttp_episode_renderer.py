@@ -143,6 +143,7 @@ class ZTTPEpisodeRenderer(BaseEpisodeRenderer):
                 )
             except RuntimeError:
                 logger.warning('Skipping episode after retries: %s', episode.title)
+                writer.new_page()
                 continue
 
             self._render_crapverts(writer, episode)
